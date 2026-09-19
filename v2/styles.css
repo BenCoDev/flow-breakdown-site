@@ -1,0 +1,494 @@
+/* Flow Breakdown — landing v2
+   Tokens are the app's own Glass kit values. Keep them in sync with
+   macos/Sources/FlowBreakdown/Model/CanvasTypes.swift and the Figma kit. */
+
+:root{
+  --canvas:#F2F2F5;
+  --surface:#FFFFFF;
+  --ink:#1C1C1E;
+  --ink-2:rgba(28,28,30,.62);
+  --ink-3:rgba(28,28,30,.40);
+  --line:rgba(28,28,30,.12);
+  --dot:rgba(28,28,30,.16);          /* canvas/dot */
+  --accent:#007AFF;                  /* accent/default */
+  --lane:#8E8E93;                    /* Feelings.laneLineColor */
+  --delighted:#34C759;
+  --confused:#A8820A;                /* Feelings.meta ink, darkened for 20pt legibility */
+  --meh:#7C7C80;
+  --warn:#FF9500;
+  --card-shadow:0 8px 22px rgba(0,0,0,.12);   /* SwiftUI radius:11 is a sigma; CSS blur ≈ 2× */
+  --sans:-apple-system,"SF Pro Text","SF Pro Display","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,monospace;
+  --round:ui-rounded,"SF Pro Rounded","SF Compact Rounded",var(--sans);
+
+  --card-w:200px;            /* Figma: 200 × 433 */
+  --card-ratio:2.165;        /* 433/200 — the ratio every card asset is cut to */
+  --card-h:calc(var(--card-w) * var(--card-ratio));
+  --gap:40px;
+  --pad:clamp(20px,5vw,120px);
+  --milk:rgba(255,255,255,.5);       /* the frost sheet's own body */
+}
+
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --canvas:#161618; --surface:#212124; --ink:#F2F2F5;
+    --ink-2:rgba(242,242,245,.62); --ink-3:rgba(242,242,245,.38);
+    --line:rgba(242,242,245,.14); --dot:rgba(242,242,245,.14);
+    --accent:#0A84FF; --lane:#98989E; --confused:#E0B341; --meh:#9B9BA0;
+    --card-shadow:0 10px 26px rgba(0,0,0,.5);
+    --milk:rgba(20,20,23,.55);
+  }
+}
+:root[data-theme="dark"]{
+  --canvas:#161618; --surface:#212124; --ink:#F2F2F5;
+  --ink-2:rgba(242,242,245,.62); --ink-3:rgba(242,242,245,.38);
+  --line:rgba(242,242,245,.14); --dot:rgba(242,242,245,.14);
+  --accent:#0A84FF; --lane:#98989E; --confused:#E0B341; --meh:#9B9BA0;
+  --card-shadow:0 10px 26px rgba(0,0,0,.5);
+  --milk:rgba(20,20,23,.55);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+
+/* The page rests on LIQUID GLASS: a colour field behind a real frost sheet
+   (fixed backdrop-filter) — the milky blur is the material, not a tint.
+   The dots are deliberately NOT here: cream-with-dots is the app's CANVAS,
+   and that surface belongs to the canvas container, not the page. */
+body{
+  background:var(--canvas);
+  color:var(--ink);
+  font-family:var(--sans);
+  -webkit-font-smoothing:antialiased;
+  line-height:1.5;
+}
+body::before{                              /* the colour behind the glass */
+  content:"";position:fixed;inset:0;z-index:-2;
+  background:
+    radial-gradient(52% 42% at 14% 6%,  rgba(0,122,255,.32), transparent 68%),
+    radial-gradient(44% 38% at 86% 12%, rgba(255,149,0,.26), transparent 66%),
+    radial-gradient(50% 42% at 70% 92%, rgba(52,199,89,.22), transparent 66%),
+    radial-gradient(40% 36% at 22% 88%, rgba(255,45,85,.14), transparent 66%);
+}
+body::after{                               /* the frost sheet itself */
+  content:"";position:fixed;inset:-60px;z-index:-1;
+  -webkit-backdrop-filter:blur(70px) saturate(1.25);
+  backdrop-filter:blur(70px) saturate(1.25);
+  background:var(--milk);
+}
+img{max-width:100%;display:block}
+a{color:inherit}
+button,a{touch-action:manipulation}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+[id]{scroll-margin-top:56px}   /* anchors clear the sticky menu bar */
+
+/* ── menu bar ───────────────────────────────── */
+.menubar{
+  position:sticky;top:0;z-index:60;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:7px 16px;
+  background:color-mix(in srgb,var(--surface) 78%,transparent);
+  backdrop-filter:saturate(180%) blur(20px);
+  -webkit-backdrop-filter:saturate(180%) blur(20px);
+  border-bottom:1px solid var(--line);
+  font-size:13px;
+}
+.menus{display:flex;align-items:center;gap:18px;min-width:0}
+.menus .mark{border-radius:3px}
+.menus .app{font-weight:600}
+.menus a{color:var(--ink-2);text-decoration:none}
+.status{display:flex;align-items:center;gap:14px;white-space:nowrap}
+.status .req{color:var(--ink-3)}
+.getbtn{
+  font-weight:500;text-decoration:none;
+  background:var(--accent);color:#fff;
+  padding:5px 13px;border-radius:999px;font-size:12.5px;
+}
+.getbtn{position:relative}
+.getbtn::before{content:"";position:absolute;inset:-9px 0}  /* 44px hit area on touch */
+.getbtn:active{transform:scale(.97)}
+@media (max-width:640px){ .menus a{display:none} }
+
+/* ── shared ───────────────────────────────── */
+.btn{
+  display:inline-block;border:0;cursor:pointer;
+  font:inherit;font-size:16px;font-weight:500;
+  color:#fff;background:var(--accent);
+  padding:13px 24px;border-radius:999px;text-decoration:none;
+}
+.btn:active{transform:scale(.97)}
+/* the caret says "down": two chevrons, cascading gently */
+#breakdown{display:inline-flex;align-items:center;gap:8px}
+.caret{width:12px;height:14px;overflow:visible}
+.caret path{
+  fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;
+  animation:caretflow 1.8s ease-in-out infinite;
+}
+.caret path:nth-child(2){animation-delay:.25s}
+@keyframes caretflow{
+  0%,100%{opacity:.3;transform:translateY(0)}
+  40%{opacity:1;transform:translateY(1.5px)}
+  70%{opacity:.3;transform:translateY(0)}
+}
+.fine{font-size:13px;color:var(--ink-3)}
+.lede{color:var(--ink-2);max-width:62ch}
+h1,h2,h3{text-wrap:balance;letter-spacing:-.02em;font-weight:500}
+
+/* ── hero ───────────────────────────────── */
+.hero{padding-top:clamp(52px,9vh,84px)}
+.promise{display:flex;flex-direction:column;align-items:center;gap:15px;text-align:center;
+  max-width:1200px;margin:0 auto;padding:0 var(--pad)}
+h1{font-size:clamp(32px,4.4vw,52px);line-height:1.08;letter-spacing:-.032em;font-weight:500}
+h1 em{font-style:normal}
+
+/* scroll zone — plain flow; the scroll position itself drives the timeline.
+   It fills the rest of the first screen so the story (ghost skeletons first)
+   starts below the fold: the opening view is promise + phone + button only. */
+.zone{
+  position:relative;margin-top:clamp(30px,4.5vh,46px);
+  min-height:calc(100svh - 250px);      /* menubar + hero head, roughly */
+  display:flex;flex-direction:column;justify-content:center;
+}
+.pin{display:flex;justify-content:center}
+
+/* ── the story: a sticky stage inside a tall zone.
+   During the flight the stage is still in flow (deltas to the phone hold);
+   it pins at --stagetop and the remaining slack drives beats 2–5. ── */
+.storyzone{position:relative}
+.armed .storyzone::after{content:"";display:block;height:2400px}
+.stage{
+  --stagetop:64px;
+  position:sticky;top:var(--stagetop);
+  max-width:1200px;margin:0 auto;padding:0 var(--pad);
+}
+.storyfoot{position:relative;height:130px;margin-top:14px}
+.scap{
+  position:absolute;left:50%;top:22px;translate:-50% 0;white-space:nowrap;
+  opacity:0;margin:0;
+}
+.scap[data-beat="0"]{opacity:1}                 /* no-JS: the plain caption */
+.ctafig{position:absolute;left:50%;top:56px;translate:-50% 0;
+  opacity:0;pointer-events:none;font-size:15px;padding:11px 22px}
+
+/* teammates' cursors — they are waiting for the paste */
+.mates{position:absolute;inset:0;pointer-events:none}
+.mate{position:absolute;opacity:0;transition:opacity .28s ease,transform .38s cubic-bezier(.2,.75,.25,1)}
+.mate .p{display:inline-flex;align-items:flex-start;gap:2px;animation:idle 3.6s ease-in-out infinite alternate}
+.mate svg{width:14px;height:16px}
+.mate i{font-style:normal;font-size:11px;font-weight:500;color:#fff;
+  padding:2px 7px;border-radius:4px 10px 10px 10px;margin-top:10px;line-height:1.4}
+.mate.m1{left:calc(50% - 178px);top:40px;transform:translate(-18px,-12px)}
+.mate.m2{left:calc(50% + 122px);top:26px;transform:translate(20px,-10px)}
+.mate.m3{left:calc(50% + 96px);top:100px;transform:translate(16px,14px)}
+.mate.m1 svg{fill:#7B61FF}.mate.m1 i{background:#7B61FF}
+.mate.m2 svg{fill:#0FA958}.mate.m2 i{background:#0FA958}
+.mate.m3 svg{fill:#FF8577}.mate.m3 i{background:#FF8577}
+.mate.m2 .p{animation-delay:-1.2s}
+.mate.m3 .p{animation-delay:-2.3s}
+@keyframes idle{
+  from{transform:translate(0,0)}
+  33%{transform:translate(2.5px,-2px)}
+  66%{transform:translate(-2px,1.5px)}
+  to{transform:translate(1.5px,2.5px)}
+}
+@media (hover:hover) and (pointer:fine){
+  .ctafig:hover ~ .mates .mate,.ctafig:focus-visible ~ .mates .mate{opacity:1;transform:translate(0,0)}
+}
+
+/* the CANVAS container, arriving at beat 4 — the app's own surface:
+   cream with the dot grid, lifted off the glass page by an ambient shadow. */
+.glass{
+  position:absolute;left:50%;top:-24px;translate:-50% 0;
+  width:min(820px,96%);height:calc(100% - 96px);
+  border-radius:30px;
+  background-color:var(--canvas);
+  background-image:radial-gradient(var(--dot) 1px,transparent 1px);
+  background-size:20px 20px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.8),
+    0 0 0 1px rgba(0,0,0,.07),
+    0 24px 60px -12px rgba(0,0,0,.18);
+  opacity:0;pointer-events:none;
+}
+:root:not([data-theme="light"]) .glass,:root[data-theme="dark"] .glass{
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.08),
+    0 0 0 1px rgba(0,0,0,.35),
+    0 24px 60px -12px rgba(0,0,0,.5);
+}
+
+/* beat 2 · the audio focus card */
+.focus{
+  position:absolute;left:50%;top:190px;translate:-50% 0;z-index:6;
+  width:min(480px,92%);padding:16px 20px 18px;border-radius:14px;
+  background:var(--surface);border:1px solid var(--line);
+  box-shadow:0 10px 28px rgba(0,0,0,.14);
+  opacity:0;pointer-events:none;
+}
+.focus b{display:block;font-size:10px;font-weight:600;color:var(--warn);letter-spacing:.04em}
+.focus q{quotes:"“" "”";display:block;font-size:20px;line-height:1.3;margin-top:4px}
+.focus .wave{display:block;width:216px;height:32px;margin-top:12px}
+
+/* beat 4 · annotations */
+.ring{
+  position:absolute;left:calc(50% + 163px);top:472px;z-index:7;
+  width:160px;height:46px;border:3px solid var(--warn);border-radius:50%;
+  rotate:-2deg;opacity:0;pointer-events:none;
+}
+.arrow{position:absolute;left:calc(50% + 268px);top:94px;z-index:7;
+  width:120px;height:330px;overflow:visible;opacity:0;pointer-events:none}
+.arrow path{stroke:var(--warn);stroke-width:3;vector-effect:non-scaling-stroke}
+.scribble{
+  position:absolute;left:calc(50% + 240px);top:56px;z-index:7;
+  font-family:var(--round);font-size:16px;color:var(--warn);rotate:-3deg;
+  white-space:nowrap;opacity:0;pointer-events:none;
+}
+
+/* beat 5 · everything selected */
+.marquee{
+  position:absolute;left:50%;top:-12px;translate:-50% 0;z-index:8;
+  width:min(860px,98%);height:calc(100% - 104px);
+  border:2px solid #0D99FF;opacity:0;pointer-events:none;
+}
+.marquee i{position:absolute;width:8px;height:8px;background:#fff;border:1px solid #0D99FF}
+.marquee i:nth-child(1){left:-5px;top:-5px}
+.marquee i:nth-child(2){right:-5px;top:-5px}
+.marquee i:nth-child(3){left:-5px;bottom:-5px}
+.marquee i:nth-child(4){right:-5px;bottom:-5px}
+
+/* while the canvas beat is live, the layers are really grabbable */
+.canvasmode .card{cursor:grab;touch-action:none}
+.canvasmode .card:active{cursor:grabbing}
+.extract{
+  display:flex;flex-direction:column;align-items:center;gap:clamp(12px,1.6vh,18px);
+  width:100%;max-width:1200px;margin:0 auto;padding:0 var(--pad);
+}
+.cap{font-size:13.5px;color:var(--ink-3);text-align:center;max-width:52ch}
+
+/* whose roll this is — attribution, not a testimonial */
+.whose{
+  display:flex;align-items:center;gap:10px;max-width:min(100%,460px);
+  font-family:var(--round);
+  margin-top:-34px;                 /* seated in the tail of the bevel's dissolve */
+  position:relative;z-index:2;
+}
+/* Desktop: a side annotation beside the phone, not a line under it — centered it
+   collides with the roll's tail and crowds the button. */
+@media (min-width:960px){
+  .extract{position:relative}
+  .whose{
+    position:absolute;margin-top:0;
+    left:calc(50% + clamp(140px,13.5vw,190px) + 32px);
+    top:calc(clamp(280px,27vw,380px) * 0.52);
+    max-width:236px;
+    align-items:flex-start;
+  }
+  .whose b{white-space:normal}
+  /* the button sits ON the bevel's dissolving tail */
+  #breakdown{margin-top:-76px;position:relative;z-index:3}
+}
+.whose img{width:32px;height:32px;border-radius:50%;flex:none;
+  border:1px solid rgba(0,0,0,.08);object-fit:cover}
+.whose figcaption{display:flex;flex-direction:column;line-height:1.38;min-width:0}
+.whose b{font-size:13px;font-weight:400;color:var(--ink-2)}
+.whose span{display:none}          /* the aside is one line; the detail lives in b */
+.whose a{font-size:11.5px;font-weight:500;color:var(--ink-3);text-decoration:none;width:max-content}
+@media (hover:hover) and (pointer:fine){
+  .menus a:hover{color:var(--ink)}
+  .getbtn:hover,.btn:hover{filter:brightness(1.06)}
+  .whose a:hover{color:var(--accent)}
+}
+
+/* The app's onboarding bevel — EmptyStateView.bevel.
+   A white wash, a white inner line, a lit top rim and a faint dark outer line.
+   Oversized and cropped, exactly as the app crops it against the window. */
+.bevel{
+  --bw:clamp(280px,27vw,380px);
+  position:relative;z-index:1;
+  width:var(--bw);
+  height:calc(var(--bw) * 1.04);                 /* runs on past the roll, under the button */
+  border-radius:calc(var(--bw) * 0.157) calc(var(--bw) * 0.157) 0 0;  /* 107/680; the bottom dissolves, so no corners there */
+  background:linear-gradient(to bottom,
+    color-mix(in srgb,var(--surface) 92%,transparent),
+    color-mix(in srgb,var(--surface) 62%,transparent));
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.55),
+    inset 0 1.5px 0 rgba(255,255,255,.9),
+    0 0 0 1px rgba(0,0,0,.05);
+  -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 52%,transparent 100%);
+  mask-image:linear-gradient(to bottom,#000 0,#000 52%,transparent 100%);
+}
+:root:not([data-theme="light"]) .bevel,
+:root[data-theme="dark"] .bevel{
+  background:linear-gradient(to bottom,
+    color-mix(in srgb,var(--surface) 88%,transparent),
+    color-mix(in srgb,var(--surface) 55%,transparent));
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.12),
+    inset 0 1.5px 0 rgba(255,255,255,.18),
+    0 0 0 1px rgba(0,0,0,.2);
+}
+.island{
+  position:absolute;left:50%;translate:-50% 0;
+  top:calc(var(--bw) * 0.029);
+  width:17.6%;height:calc(var(--bw) * 0.05);
+  border-radius:999px;background:color-mix(in srgb,var(--ink) 8%,transparent);
+}
+
+/* the recordings, on the bevel's own surface */
+.library{position:absolute;left:7.5%;right:7.5%;top:calc(var(--bw) * 0.115);}
+.libhdr{margin-bottom:9px}
+.libhdr b{display:block;font-size:clamp(13px,1.35vw,16px);font-weight:600;letter-spacing:-.015em}
+.libhdr span{display:block;font-size:clamp(9px,1vw,11px);color:var(--ink-3);margin-top:1px}
+.roll{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;
+  border-radius:10px;overflow:hidden}
+.cell{position:relative;margin:0;padding:0;border:0;background:none;display:block}
+.cell.pick{cursor:pointer}
+.cell.pick:focus-visible{outline:2px solid var(--accent);outline-offset:-2px;border-radius:2px}
+/* the selection control: a ring when unpicked, a filled check when picked */
+.mark{
+  position:absolute;right:5px;bottom:5px;
+  width:19px;height:19px;border-radius:50%;
+  background:rgba(0,0,0,.18);border:1.5px solid #fff;
+  display:grid;place-items:center;
+  transition:background .15s linear;
+}
+.mark::after{
+  content:"";width:9px;height:9px;
+  background:#fff;opacity:0;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M1.5 6.4l3 3 6-6.4' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M1.5 6.4l3 3 6-6.4' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;
+  transition:opacity .15s linear;
+}
+.cell.pick[aria-pressed="true"] .mark{background:var(--accent)}
+.cell.pick[aria-pressed="true"] .mark::after{opacity:1}
+.cell img{width:100%;height:auto;aspect-ratio:1;object-fit:cover;display:block}
+.cell b{position:absolute;left:6px;bottom:4px;color:#fff;font-size:9.5px;font-weight:600;
+  text-shadow:0 1px 2px rgba(0,0,0,.55)}
+
+/* the board — this is the END state, rendered in HTML */
+.board{position:relative;width:100%;display:flex;justify-content:center;z-index:2}
+.lane{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:4}
+.lane path{fill:none;stroke:var(--lane);stroke-width:1.5;stroke-dasharray:4 4}
+.flow{list-style:none;display:flex;gap:var(--gap);justify-content:center;padding:30px 0 0}
+.slot{position:relative;width:var(--card-w);display:flex;flex-direction:column}
+.chip{
+  position:absolute;left:50%;translate:-50% 0;top:calc(-40px + var(--offset) * 1px);
+  display:inline-flex;align-items:center;gap:6px;white-space:nowrap;
+  background:var(--surface);border:1px solid var(--line);border-radius:999px;
+  height:24px;padding:0 12px 0 2px;font-size:13px;font-weight:500;line-height:1;
+  box-shadow:0 1px 2px rgba(0,0,0,.08);z-index:5;
+}
+.chip.sug{border-style:dashed;box-shadow:none}
+.chip .face{width:20px;height:20px;flex:none}
+
+.label{font-size:12px;color:var(--ink-3);margin-bottom:5px}
+/* Names the empty board. On a plate, so it reads as a note about the whole
+   canvas and not as a caption belonging to the middle slot it sits over. */
+.waiting{position:absolute;left:50%;top:50%;translate:-50% -50%;z-index:3;
+  margin:0;padding:7px 16px;border-radius:999px;
+  background:var(--surface);border:1px solid var(--line);
+  box-shadow:0 1px 2px rgba(0,0,0,.05);
+  font-size:13.5px;color:var(--ink-3);text-align:center;
+  white-space:nowrap;pointer-events:none;opacity:0}
+.armed .waiting{opacity:1}
+.cardbox{position:relative;width:var(--card-w);height:var(--card-h)}
+.ghost{position:absolute;inset:0;border-radius:19px;
+  border:1px dashed color-mix(in srgb, var(--ink) 14%, transparent);
+  background:color-mix(in srgb, var(--surface) 46%, transparent);
+  opacity:0;transition:none}
+.armed .ghost{opacity:1}
+.armed .card{
+  position:absolute;inset:0;width:var(--card-w);height:var(--card-h);
+  border-radius:19px;overflow:hidden;
+  border:1px solid rgba(0,0,0,.08);
+  box-shadow:var(--card-shadow);
+  transform-origin:50% 50%;
+}
+.card img{width:100%;height:100%;object-fit:cover;aspect-ratio:400 / 866;display:block}
+.note{                                   /* Figma / app Voice Note: 236 × 35 */
+  width:236px;margin:10px 0 0 -18px;
+  background:var(--surface);
+  border:1px solid var(--line);border-radius:9px;padding:4px 9px;
+  box-shadow:0 1px 3px rgba(0,0,0,.09);
+}
+.note b{display:block;font-size:8px;font-weight:600;color:var(--warn);letter-spacing:.04em;line-height:1.3}
+.note span{display:block;font-size:11px;line-height:1.3;margin-top:1px;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+
+/* Small screens: the canvas is wider than the phone, so let it bleed. */
+@media (max-width:720px){
+  :root{--card-w:150px;--gap:16px}
+  .note{margin-left:0}
+  .chip{font-size:11px;padding:3px 10px 3px 4px}
+  .board{overflow:visible}
+  .flow{justify-content:center;width:max-content;margin:0 auto}
+  .note{width:100%}   /* full cell width at 150px cards */
+}
+
+/* ── bands ───────────────────────────────── */
+.band{padding:clamp(56px,9vh,104px) var(--pad) 0;max-width:1200px;margin:0 auto}
+.band h2{font-size:clamp(24px,3.4vw,34px);letter-spacing:-.022em}
+.band > .lede{margin-top:8px;font-size:17px}
+
+.steps{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:clamp(24px,4vw,40px);margin-top:36px}
+.steps li{border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:8px}
+.steps .n{font-family:var(--mono);font-size:12px;color:var(--ink-3)}
+.steps h3{font-size:20px}
+.steps p{color:var(--ink-2);font-size:16px}
+
+.voice{background:transparent}
+.voicecopy{display:flex;flex-direction:column;gap:16px;max-width:620px}
+.voice h2{font-size:clamp(24px,3.4vw,34px)}
+.voice .quiet{color:var(--ink-3);font-size:15px;max-width:58ch}
+
+.details{margin-top:28px;border-top:1px solid var(--line)}
+.details > div{display:grid;grid-template-columns:minmax(150px,210px) 1fr;gap:clamp(16px,4vw,40px);
+  padding:22px 0;border-bottom:1px solid var(--line)}
+.details dt{font-weight:500;font-size:17px}
+.details dd{color:var(--ink-2);font-size:17px}
+@media (max-width:640px){ .details > div{grid-template-columns:1fr;gap:6px} }
+
+.close{display:flex;flex-direction:column;align-items:center;gap:44px;text-align:center}
+.cta{background:color-mix(in srgb,var(--surface) 62%,transparent);
+  border:1px solid var(--line);border-radius:24px;
+  padding:clamp(34px,6vw,62px) clamp(24px,5vw,64px);
+  display:flex;flex-direction:column;align-items:center;gap:16px;width:100%;max-width:960px}
+.cta img{border-radius:12px}
+.makernote{max-width:620px;display:flex;flex-direction:column;gap:8px}
+.makernote blockquote{font-style:italic;color:var(--ink-2);font-size:17px;line-height:1.5}
+.makernote figcaption{font-size:14px;color:var(--ink-3)}
+
+footer{max-width:1200px;margin:0 auto;padding:56px var(--pad) 64px;
+  display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;
+  border-top:1px solid var(--line);margin-top:clamp(56px,9vh,104px);
+  font-size:13px;color:var(--ink-3)}
+footer nav{display:flex;gap:20px}
+footer a{text-decoration:none}
+
+/* ── motion ───────────────────────────────── */
+/* JS adds .armed once it has measured and can safely rewind to progress 0.
+   Without JS, or before measurement, the board simply shows its end state. */
+.armed .card,
+.armed .ghost,
+.armed .chip,
+.armed .note,
+.armed .label{will-change:transform,opacity}
+.armed .lane path{opacity:0}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .mark,.mark::after{transition:none}
+  .caret path{animation:none}
+  .mate .p{animation:none}
+  .zone{height:auto}
+  .storyzone{padding-bottom:0}
+  .stage{position:static}
+  .focus,.ring,.arrow,.scribble,.marquee,.glass,.ctafig{display:none}
+  .scap{opacity:0}
+  .scap[data-beat="0"]{opacity:1}
+  .armed .card,.armed .chip,.armed .note,.armed .label{transform:none !important;opacity:1 !important;clip-path:none !important}
+  .armed .ghost,.armed .waiting{opacity:0 !important}
+  .armed .lane path{opacity:1}
+}

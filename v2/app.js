@@ -1,0 +1,612 @@
+/* Flow Breakdown — the extraction, on the web.
+ *
+ * The board is rendered in its END state in HTML, so the page is true with no JS.
+ * This script measures that layout, rewinds it onto the selected thumbnail, and
+ * plays it forward. Every number below comes from ExtractionScene.swift.
+ *
+ *   morph  timingCurve(0.32, 0.72, 0, 1)  0.36s
+ *   lift   timingCurve(0.2, 0.75, 0.25, 1) 0.76s
+ *   cards leave 120ms apart, first at 360ms
+ *   squash 0.985 over 0.13s, easeOut, each way
+ */
+(function () {
+  'use strict';
+
+  var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduced) {
+    // The end state is already correct and nothing animates — but the button must
+    // not be dead: it takes you to the board, with no motion.
+    var btn = document.getElementById('breakdown');
+    var brd = document.getElementById('board');
+    if (btn && brd) btn.addEventListener('click', function () {
+      brd.scrollIntoView({ behavior: 'auto', block: 'nearest' });
+    });
+    return;
+  }
+
+  // ── easing ────────────────────────────────
+  function bezier(x1, y1, x2, y2) {
+    var cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    var cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    function sx(t) { return ((ax * t + bx) * t + cx) * t; }
+    function sdx(t) { return (3 * ax * t + 2 * bx) * t + cx; }
+    function sy(t) { return ((ay * t + by) * t + cy) * t; }
+    return function (p) {
+      if (p <= 0) return 0;
+      if (p >= 1) return 1;
+      var t = p;
+      for (var i = 0; i < 8; i++) {
+        var x = sx(t) - p;
+        if (Math.abs(x) < 1e-5) break;
+        var d = sdx(t);
+        if (Math.abs(d) < 1e-6) break;
+        t -= x / d;
+      }
+      return sy(t);
+    };
+  }
+  var LIFT  = bezier(0.2, 0.75, 0.25, 1);
+  var MORPH = bezier(0.32, 0.72, 0, 1);
+  var EASE  = bezier(0, 0, 0.58, 1);
+
+  var clamp = function (v, a, b) { return Math.min(b, Math.max(a, v)); };
+  var span  = function (p, a, b) { return clamp((p - a) / (b - a), 0, 1); };
+  var mix   = function (a, b, t) { return a + (b - a) * t; };
+
+  // ── timeline, in progress space (2120ms total) ──
+  var ARM_END    = 0.14;
+  var CARD_START = [0.170, 0.226, 0.283];   // 360ms + i×120ms
+  var CARD_SPAN  = 0.358;                   // 760ms lift
+  var UNFURL     = 0.143;                   // the thumbnail opens into a screen
+  var SETTLE     = [0.66, 0.83];
+  var SQUASH     = 0.061;                   // 130ms each way
+
+  var extract = document.getElementById('extract');
+  var phone   = document.getElementById('phone');
+  var picks   = [].slice.call(document.querySelectorAll('.cell.pick'));
+  var board   = document.getElementById('board');
+  var lane    = document.getElementById('lane');
+  var lanePath= document.getElementById('lanePath');
+  var waiting = document.getElementById('waiting');
+  var zone    = document.getElementById('zone');
+  var pin     = document.getElementById('pin');
+  var button  = document.getElementById('breakdown');
+  var storyzone = document.getElementById('storyzone');
+  var stage   = document.getElementById('stage');
+  var glass   = document.getElementById('glass');
+  var focus   = document.getElementById('focus');
+  var focusTime  = document.getElementById('focusTime');
+  var focusQuote = document.getElementById('focusQuote');
+  var ring    = document.getElementById('ring');
+  var arrow   = document.getElementById('arrow');
+  var arrowPath = arrow && arrow.querySelector('path');
+  var scribble = document.getElementById('scribble');
+  var marquee = document.getElementById('marquee');
+  var scaps   = [].slice.call(document.querySelectorAll('.scap'));
+  var ctafig  = document.getElementById('ctafig');
+  if (!extract || !board || !picks.length) return;
+
+  // the cards fly out of whichever cell is picked
+  function originCell() { return picks[current] || picks[0]; }
+
+  var slots = [].slice.call(board.querySelectorAll('.slot'));
+  var cards = slots.map(function (s) { return s.querySelector('.card'); });
+  var chips = slots.map(function (s) { return s.querySelector('.chip'); });
+  var notes = slots.map(function (s) { return s.querySelector('.note'); });
+  var labels= slots.map(function (s) { return s.querySelector('.label'); });
+  var ghosts= slots.map(function (s) { return s.querySelector('.ghost'); });
+
+  // Each recording is hard-wired to its own three screens. Voice notes and feelings are
+  // illustrative observations, not transcripts of anyone's actual recording.
+  // The feeling stickers, straight from Feelings.swift: a disc of the HUE at
+  // discTint 0.16, a line face in the INK (deeper than the hue where the hue is
+  // too light to read at 20pt — yellow above all). `ink` is a CSS var so dark
+  // mode follows the app's tokens; `inkHex` is for the clipboard SVG.
+  var FEELINGS = {
+    Delighted: { hue: '#34C759', ink: 'var(--delighted)', inkHex: '#34C759',
+      strokes: 'M5.2 8.8Q6.7 6.6 8.2 8.8M11.8 8.8Q13.3 6.6 14.8 8.8',
+      fills: 'M6 11.2L14 11.2Q14 15.6 10 15.6Q6 15.6 6 11.2Z', dots: [] },
+    Good: { hue: '#007AFF', ink: 'var(--accent)', inkHex: '#007AFF',
+      strokes: 'M6.6 12.2Q10 15.4 13.4 12.2', fills: '', dots: [[7.6, 8.6], [12.4, 8.6]] },
+    Meh: { hue: '#AEAEB2', ink: 'var(--meh)', inkHex: '#7C7C80',
+      strokes: 'M6.8 13.4L13.2 13.4', fills: '', dots: [[7.6, 8.8], [12.4, 8.8]] },
+    Confused: { hue: '#FFCC00', ink: 'var(--confused)', inkHex: '#A8820A',
+      strokes: 'M11.2 6.1L14.6 5.1M6.6 14Q8.4 12.4 10 13.4Q11.6 14.4 13.4 12.8',
+      fills: '', dots: [[7.6, 9.2], [12.4, 9.2]] }
+  };
+
+  function faceParts(f, ink) {
+    var s = '<circle cx="10" cy="10" r="10" fill="' + f.hue + '" fill-opacity="0.16"/>';
+    if (f.fills) s += '<path d="' + f.fills + '" fill="' + ink + '"/>';
+    f.dots.forEach(function (d) {
+      s += '<ellipse cx="' + d[0] + '" cy="' + d[1] + '" rx="1.1" ry="1.35" fill="' + ink + '"/>';
+    });
+    s += '<path d="' + f.strokes + '" fill="none" stroke="' + ink + '" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>';
+    return s;
+  }
+  function faceSVG(name) {
+    return '<svg class="face" viewBox="0 0 20 20" aria-hidden="true">' + faceParts(FEELINGS[name], FEELINGS[name].ink) + '</svg>';
+  }
+
+  var RECORDINGS = [
+    { slug:'card', alt:'RunBuds',
+      feelings:[['Delighted',false],['Confused',true],['Meh',false]],
+      notes:[['Voice · 0:12','“Oh, nice. That’s pretty cool.”'],
+             ['Voice · 0:38','“I’m not sure what this is about.”'],
+             ['Voice · 0:17','“Okay, last step.”']] },
+    { slug:'out', alt:'The Outsiders',
+      feelings:[['Good',false],['Delighted',false],['Meh',true]],
+      notes:[['Voice · 0:09','“That chart is doing a lot of work.”'],
+             ['Voice · 0:31','“The year view is the good bit.”'],
+             ['Voice · 0:58','“Not sure I need this tab.”']] },
+    { slug:'our', alt:'Oura',
+      feelings:[['Confused',true],['Good',false],['Delighted',false]],
+      notes:[['Voice · 0:06','“Where is the summary?”'],
+             ['Voice · 0:22','“Okay, that one is clear.”'],
+             ['Voice · 0:44','“This breakdown is lovely.”']] }
+  ];
+  var current = 0;
+
+  function applyRecording(i) {
+    var r = RECORDINGS[i];
+    cards.forEach(function (c, n) {
+      var img = c.querySelector('img');
+      img.src = 'assets/' + r.slug + (n + 1) + '.jpg';
+      img.srcset = 'assets/' + r.slug + (n + 1) + '.jpg 1x, assets/' + r.slug + (n + 1) + '@2x.jpg 2x';
+      img.alt = 'Screen ' + (n + 1) + ' of the ' + r.alt + ' recording';
+    });
+    chips.forEach(function (ch, n) {
+      var f = r.feelings[n];
+      ch.lastChild.textContent = f[0];
+      var face = ch.querySelector('.face');
+      if (face) face.outerHTML = faceSVG(f[0]);
+      ch.classList.toggle('sug', f[1]);
+    });
+    notes.forEach(function (nt, n) {
+      nt.querySelector('b').textContent = r.notes[n][0];
+      nt.querySelector('span').textContent = r.notes[n][1];
+    });
+    picks.forEach(function (b, n) { b.setAttribute('aria-pressed', String(n === i)); });
+    if (focusTime)  focusTime.textContent  = r.notes[1][0].toUpperCase();
+    if (focusQuote) focusQuote.textContent = r.notes[1][1].replace(/^\u201C|\u201D$/g, '');
+    drags.forEach(function (d) { d.x = 0; d.y = 0; });
+    current = i;
+  }
+
+  var geo = null;
+
+  function measure() {
+    // Clear transforms so we measure the true laid-out (end) positions.
+    cards.forEach(function (c) { c.style.transform = ''; c.style.clipPath = ''; });
+    var srect = originCell().getBoundingClientRect();
+    var g = { src: srect, cards: [], pile: null };
+    cards.forEach(function (c) { g.cards.push(c.getBoundingClientRect()); });
+
+    var first = g.cards[0];
+    if (!first || !first.width || !srect.width) { geo = null; return; }
+
+    g.scale0 = srect.width / first.width;              // thumbnail width → card width
+    // clip the card to the thumbnail's square at t=0, in the card's own pixels
+    g.inset0 = Math.max(0, (first.height - srect.height / g.scale0) / 2);
+
+    // The pile forms where the middle card will land. Putting it midway between
+    // the phone and the row looks right in isolation but parks it on top of the
+    // caption and the button for the whole of the settle.
+    var mid = g.cards[1] || first;
+    g.pile = { x: mid.left, y: mid.top };
+
+    // story landmarks, in scrollY terms. The stage's natural top is the zone's
+    // top (first child); it pins STAGETOP below the viewport top. The flight
+    // window Wf is the share of the full range spent travelling to the pin.
+    var zr = storyzone.getBoundingClientRect();
+    var zTop = window.scrollY + zr.top;
+    g.startY = zTop - window.innerHeight * 0.85;
+    g.endY   = zTop + zr.height - window.innerHeight;
+    var pinY = zTop - STAGETOP;
+    g.Wf = clamp((pinY - g.startY) / (g.endY - g.startY), 0.05, 0.6);
+
+    geo = g;
+    drawLane();
+  }
+
+  var STAGETOP = 64;
+  // the focus card's waveform, built once
+  (function buildWave() {
+    var svg = focus && focus.querySelector('.wave');
+    if (!svg || svg.childNodes.length) return;
+    var hs = [6,10,16,22,14,26,18,30,12,22,26,16,10,20,28,14,8,18,24,12,6,16,10,8];
+    for (var i = 0; i < hs.length; i++) {
+      var r = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      r.setAttribute('x', i * 9); r.setAttribute('width', 5);
+      r.setAttribute('y', 16 - hs[i] / 2); r.setAttribute('height', hs[i]);
+      r.setAttribute('rx', 2.5);
+      r.setAttribute('fill', i < 15 ? 'var(--warn)' : 'currentColor');
+      r.setAttribute('opacity', i < 15 ? '1' : '0.18');
+      svg.appendChild(r);
+    }
+  })();
+  var arrowLen = 0;
+
+  function drawLane() {
+    if (!geo) return;
+    var b = board.getBoundingClientRect();
+    lane.setAttribute('width', b.width);
+    lane.setAttribute('height', b.height);
+    var pts = chips.map(function (ch) {
+      var r = ch.getBoundingClientRect();
+      return { x: r.left - b.left + r.width / 2, y: r.top - b.top + r.height / 2 };
+    });
+    lanePath.setAttribute('d',
+      'M ' + pts[0].x + ' ' + pts[0].y +
+      ' L ' + pts[1].x + ' ' + pts[1].y +
+      ' L ' + pts[2].x + ' ' + pts[2].y);
+  }
+
+  // scatter poses for the canvas beat — [rot, dx, dy]
+  var SCAT = {
+    cards: [[-5, -30, 14], [3, 12, -16], [7, 28, 24]],
+    notes: [[-3, -40, 8], [2, 48, -4], [-2, 20, 14]],
+    chips: [[-4, -18, 4], [0, 24, -8], [3, 10, 2]]
+  };
+  var drags = [{ x: 0, y: 0 }, { x: 0, y: 0 }, { x: 0, y: 0 }];
+
+  function bump(t, a, b, c, d) { return EASE(span(t, a, b)) * (1 - EASE(span(t, c, d))); }
+
+  function render(p) {
+    if (!geo) return;
+    var Wf = geo.Wf || 0.3;
+    var pf = span(p, 0, Wf);          // the flight — delivers the FRAMES ONLY
+    var q  = span(p, Wf, 1);          // the story: audio, emotions, canvas
+
+    // beat drivers. bumps are lenses (come and go); one-way spans are arrivals.
+    var V = bump(q, 0.08, 0.16, 0.30, 0.36);   // the focus card
+    var P = bump(q, 0.42, 0.50, 0.58, 0.64);   // chip emphasis pop
+    var C = EASE(span(q, 0.66, 0.76));          // canvas arrives, stays
+    var A = EASE(span(q, 0.76, 0.86));          // annotations draw
+    var G = EASE(span(q, 0.88, 0.95));          // everything selected
+
+    var spent = EASE(span(pf, CARD_START[0], CARD_START[0] + CARD_SPAN * 0.6));
+    var used = originCell().querySelector('img');
+    if (used) used.style.opacity = String(mix(1, 0.32, spent));
+    picks.forEach(function (b) {
+      var im = b.querySelector('img');
+      if (im && im !== used) im.style.opacity = '1';
+    });
+
+    var settle = MORPH(span(pf, SETTLE[0], SETTLE[1]));
+    var squash = 1;
+
+    cards.forEach(function (c, i) {
+      var a = CARD_START[i], b = a + CARD_SPAN;
+      var lift = LIFT(span(pf, a, b));
+      var end  = geo.cards[i];
+      var rot  = parseFloat(c.dataset.rot) || 0;
+      var dx   = parseFloat(c.dataset.dx) || 0;
+      var dy   = parseFloat(c.dataset.dy) || 0;
+
+      var startX = geo.src.left + geo.src.width / 2  - (end.left + end.width / 2);
+      var startY = geo.src.top  + geo.src.height / 2 - (end.top + end.height / 2);
+      var pileX  = geo.pile.x + dx - end.left;
+      var pileY  = geo.pile.y + dy - end.top;
+
+      var tx = mix(mix(startX, pileX, lift), 0, settle);
+      var ty = mix(mix(startY, pileY, lift), 0, settle);
+      var sc = mix(mix(geo.scale0, 1, lift), 1, settle);
+      var rt = mix(mix(0, rot, lift), 0, settle);
+
+      tx += SCAT.cards[i][1] * C + drags[i].x;
+      ty += SCAT.cards[i][2] * C + drags[i].y;
+      rt += SCAT.cards[i][0] * C;
+
+      c.style.opacity = pf <= a ? '0' : String(1 - 0.3 * V - 0.25 * P);
+      c.style.zIndex = 10 + i;
+      c.style.transform = 'translate(' + tx.toFixed(2) + 'px,' + ty.toFixed(2) + 'px) ' +
+                          'scale(' + sc.toFixed(4) + ') rotate(' + rt.toFixed(2) + 'deg)';
+      c.style.boxShadow = G > 0
+        ? 'var(--card-shadow), 0 0 0 1.5px rgba(13,153,255,' + (0.8 * G).toFixed(3) + ')'
+        : '';
+
+      var ins = mix(geo.inset0, 0, EASE(span(pf, a, a + UNFURL)));
+      c.style.clipPath = 'inset(' + ins.toFixed(1) + 'px 0 ' + ins.toFixed(1) + 'px 0 round 19px)';
+
+      var land = span(pf, b, b + SQUASH), back = span(pf, b + SQUASH, b + SQUASH * 2);
+      if (land > 0 && back < 1) {
+        squash = Math.min(squash, mix(1, 0.985, EASE(land)) + (back > 0 ? 0.015 * EASE(back) : 0));
+      }
+
+      if (ghosts[i]) ghosts[i].style.opacity = String(1 - EASE(span(pf, a, b)));
+      labels[i].style.opacity = String(
+        (0.45 + 0.55 * EASE(span(pf, 0.80, 0.90))) * (1 - 0.4 * V) * (1 - 0.4 * P) * (1 - 0.7 * C));
+    });
+
+    if (board.style.getPropertyValue('--squash') !== String(squash)) {
+      board.style.setProperty('--squash', squash);
+    }
+
+    // Headroom: as the chips arrive (and from then on), the whole board eases
+    // down so the chips aren't jammed under the container's top edge. The
+    // stage-anchored annotations are positioned for the shifted board.
+    var D = 30 * EASE(span(q, 0.40, 0.50));
+    board.style.transform = D > 0.1 ? 'translateY(' + D.toFixed(1) + 'px)' : '';
+
+    // ── beat 2: the voice notes ARRIVE (and stay) ──
+    notes.forEach(function (n, i) {
+      var e = EASE(span(q, 0.08 + i * 0.03, 0.18 + i * 0.03));
+      n.style.opacity = String(e);
+      var ny = mix(-22, 0, e) + SCAT.notes[i][2] * C;
+      var nx = SCAT.notes[i][1] * C;
+      var nr = SCAT.notes[i][0] * C;
+      n.style.transform = 'translate(' + nx.toFixed(1) + 'px,' + ny.toFixed(1) + 'px) ' +
+                          'scale(' + mix(0.92, 1, e).toFixed(3) + ') rotate(' + nr.toFixed(2) + 'deg)';
+      n.style.boxShadow = G > 0 ? '0 1px 3px rgba(0,0,0,.09), 0 0 0 1px rgba(13,153,255,' + (0.7 * G).toFixed(3) + ')' : '';
+    });
+
+    // ── beat 3: the feelings ARRIVE (and stay); the pop is just emphasis ──
+    chips.forEach(function (ch, i) {
+      var e = EASE(span(q, 0.40 + i * 0.03, 0.50 + i * 0.03));
+      ch.style.opacity = String(e);
+      var s = mix(0.92, 1, e) * (1 + 0.45 * P);
+      var cy2 = mix(8, 0, e) - 6 * P + SCAT.chips[i][2] * C;
+      var cx2 = SCAT.chips[i][1] * C;
+      var cr2 = SCAT.chips[i][0] * C;
+      ch.style.transform = 'translate(calc(-50% + ' + cx2.toFixed(1) + 'px),' + cy2.toFixed(1) + 'px) ' +
+                           'scale(' + s.toFixed(3) + ') rotate(' + cr2.toFixed(2) + 'deg)';
+    });
+    lanePath.style.opacity = String(EASE(span(q, 0.46, 0.58)) * (1 - C));
+
+    if (waiting) waiting.style.opacity = String(1 - EASE(span(pf, 0, 0.08)));
+
+    if (focus) {
+      focus.style.opacity = String(V);
+      focus.style.translate = '-50% ' + mix(14, 0, V).toFixed(1) + 'px';
+      focus.style.scale = String(mix(0.94, 1, V).toFixed(3));
+    }
+    if (glass) { glass.style.opacity = String(C); glass.style.scale = String(mix(0.97, 1, C).toFixed(3)); }
+    if (ring) { ring.style.opacity = String(A); ring.style.scale = String(mix(1.25, 1, A).toFixed(3)); }
+    if (arrowPath) {
+      if (!arrowLen) { try { arrowLen = arrowPath.getTotalLength(); } catch (e2) { arrowLen = 260; } }
+      arrow.style.opacity = String(Math.min(1, A * 3));
+      arrowPath.style.strokeDasharray = arrowLen;
+      arrowPath.style.strokeDashoffset = String((1 - A) * arrowLen);
+    }
+    if (scribble) { scribble.style.opacity = String(A); scribble.style.translate = '0 ' + mix(-8, 0, A).toFixed(1) + 'px'; }
+    if (marquee) { marquee.style.opacity = String(G); marquee.style.scale = String(mix(1.02, 1, G).toFixed(3)); }
+    if (ctafig) {
+      ctafig.style.opacity = String(G);
+      ctafig.style.translate = '-50% ' + mix(10, 0, G).toFixed(1) + 'px';
+      ctafig.style.pointerEvents = G > 0.5 ? 'auto' : 'none';
+    }
+    if (stage) stage.classList.toggle('canvasmode', C > 0.5);
+
+    var capOps = [
+      EASE(span(pf, 0.9, 1)) * (1 - EASE(span(q, 0.04, 0.10))),
+      bump(q, 0.10, 0.16, 0.32, 0.38),
+      bump(q, 0.44, 0.50, 0.60, 0.66),
+      C * (1 - EASE(span(q, 0.84, 0.90))),
+      G
+    ];
+    scaps.forEach(function (s2, i) { s2.style.opacity = String(capOps[i] || 0); });
+  }
+
+  // ── the driver: progress is ATTACHED to the scroll position ──
+  //
+  // Not fired by it — attached to it. p is a pure function of where the page is,
+  // so the animation can never be missed: scroll fast and it fast-forwards, scroll
+  // slowly and it plays at your pace, scroll back up and it rewinds. There is no
+  // play-once event to blow past, and autoplay is impossible by construction —
+  // nothing moves unless the page moves. Resting mid-run is now a legitimate
+  // state: it reads as paused-where-you-are, because it is.
+  //
+  // The mapping (Motion's scroll(), vendored; hand fallback below must match):
+  //   p = 0  board top reaches 85% down the viewport   (offset 'start 0.85')
+  //   p = 1  board bottom reaches the viewport bottom  (offset 'end 1')
+
+  var progress = 0;
+
+  function setProgress(p) {
+    progress = clamp(p, 0, 1);
+    render(progress);
+  }
+
+  function scrubRange() {           // the story's range in scrollY terms
+    if (geo && geo.endY) {
+      return { start: geo.startY, end: geo.endY,
+               flightEnd: geo.startY + ((geo.Wf || 0.3) + 0.02) * (geo.endY - geo.startY) };
+    }
+    var r = storyzone.getBoundingClientRect();
+    var top = window.scrollY + r.top;
+    var s = top - window.innerHeight * 0.85, e = top + r.height - window.innerHeight;
+    return { start: s, end: e, flightEnd: s + 0.32 * (e - s) };
+  }
+
+  function sync() {                 // recompute p from the page, by hand
+    var g = scrubRange(), len = g.end - g.start;
+    setProgress(len > 0 ? (window.scrollY - g.start) / len : 1);
+  }
+
+  if (window.Motion && Motion.scroll) {
+    Motion.scroll(function (p) {
+      setProgress(typeof p === 'number' ? p : 0);
+    }, { target: storyzone, offset: ['start 0.85', 'end 1'] });
+  } else {
+    addEventListener('scroll', sync, { passive: true });
+    addEventListener('resize', sync);
+  }
+
+  // ── the button: "break it down" DRIVES the scroll down ──
+  // One decisive ease-out glide from wherever the page is to the end of the zone:
+  // fast off the line — the tap wants the payoff — then decelerating, so the
+  // chips and notes land gently in the slow tail. Any real gesture (wheel, touch,
+  // key, pointer) cancels the glide instantly: the page belongs to the visitor,
+  // and their scroll takes over the same attached state.
+  var GLIDE_MS = 1100;       // full-range drive; partial runs scale down from this
+  var glideId = 0;
+
+  function glide(toY, ms, done) {
+    var fromY = window.scrollY, t0 = performance.now(), id = ++glideId;
+    (function step(now) {
+      if (id !== glideId) return;                    // a real gesture took over
+      var t = clamp((now - t0) / ms, 0, 1);
+      var e = 1 - Math.pow(1 - t, 3);                // ease out
+      window.scrollTo({ top: fromY + (toY - fromY) * e, behavior: 'instant' });
+      if (t < 1) requestAnimationFrame(step);
+      else if (done) done();
+    })(t0);
+  }
+
+  ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(function (evt) {
+    addEventListener(evt, function () { glideId++; }, { passive: true });
+  });
+
+  // "break it down" delivers the breakdown: it drives to the end of the flight.
+  // The story beats stay on the visitor's own scroll. Already broken? Rewind to
+  // the start of the zone and run the flight again.
+  button && button.addEventListener('click', function () {
+    if (!geo) return;
+    var g = scrubRange();
+    var flightDone = progress >= (geo.Wf || 0.3) + 0.05;
+    if (flightDone) {
+      glide(Math.max(0, g.start), 400, function () {
+        glide(scrubRange().flightEnd, GLIDE_MS);
+      });
+    } else {
+      var len2 = g.flightEnd - g.start;
+      var frac = len2 > 0 ? clamp((g.flightEnd - window.scrollY) / len2, 0, 1) : 0;
+      glide(g.flightEnd, Math.max(450, GLIDE_MS * frac));
+    }
+  });
+
+  // ── "copy to figma" really copies ──
+  // An SVG of the current teardown goes to the pasteboard; ⌘V in Figma lands it
+  // as editable layers — the landing page ends by doing the thing the app does.
+  // On touch there is no pasteboard story: the button emails the page to your mac.
+  var CHIP_OFF = [0, 12, 8];
+  var coarse = matchMedia('(pointer: coarse)').matches;
+  var ctaLabel = document.getElementById('ctalabel');
+  if (coarse && ctaLabel) ctaLabel.textContent = 'send it to your mac';
+
+  function imgData(im) {
+    return new Promise(function (res) {
+      var go = function () {
+        var cv = document.createElement('canvas');
+        cv.width = im.naturalWidth; cv.height = im.naturalHeight;
+        cv.getContext('2d').drawImage(im, 0, 0);
+        try { res(cv.toDataURL('image/jpeg', 0.85)); } catch (err) { res(null); }
+      };
+      if (im.complete && im.naturalWidth) go(); else im.addEventListener('load', go, { once: true });
+    });
+  }
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  function teardownSVG(cb) {
+    var r = RECORDINGS[current];
+    Promise.all(cards.map(function (c) { return imgData(c.querySelector('img')); })).then(function (uris) {
+      var s = ['<svg xmlns="http://www.w3.org/2000/svg" width="680" height="580" viewBox="0 0 680 580" fill="none">', '<defs>'];
+      for (var i = 0; i < 3; i++) s.push('<clipPath id="scr' + i + '"><rect x="' + (i * 240) + '" y="66" width="200" height="433" rx="19"/></clipPath>');
+      s.push('</defs>');
+      for (var i = 0; i < 3; i++) {
+        var x = i * 240, f = r.feelings[i], off = CHIP_OFF[i], fd = FEELINGS[f[0]];
+        s.push('<rect x="' + (x + 54) + '" y="' + (6 + off) + '" width="92" height="24" rx="12" fill="#FFFFFF" stroke="#D9D9DE"' + (f[1] ? ' stroke-dasharray="4 3"' : '') + '/>');
+        s.push('<g transform="translate(' + (x + 58) + ' ' + (8 + off) + ')">' + faceParts(fd, fd.inkHex) + '</g>');
+        s.push('<text x="' + (x + 82) + '" y="' + (22 + off) + '" font-family="SF Pro Text, Inter, sans-serif" font-size="13" fill="#1C1C1E">' + esc(f[0]) + '</text>');
+        s.push('<text x="' + x + '" y="58" font-family="SF Pro Text, Inter, sans-serif" font-size="12" fill="#8E8E93">Screen ' + (i + 1) + '</text>');
+        if (uris[i]) s.push('<image x="' + x + '" y="66" width="200" height="433" clip-path="url(#scr' + i + ')" href="' + uris[i] + '"/>');
+        s.push('<rect x="' + x + '" y="66" width="200" height="433" rx="19" stroke="#00000022"/>');
+        s.push('<rect x="' + (x - 9) + '" y="511" width="236" height="42" rx="9" fill="#FFFFFF" stroke="#E3E3E8"/>');
+        s.push('<text x="' + x + '" y="526" font-family="SF Pro Text, Inter, sans-serif" font-size="9" font-weight="600" fill="#FF9500">' + esc(r.notes[i][0].toUpperCase()) + '</text>');
+        s.push('<text x="' + x + '" y="542" font-family="SF Pro Text, Inter, sans-serif" font-size="11" fill="#1C1C1E">' + esc(r.notes[i][1]) + '</text>');
+      }
+      s.push('</svg>');
+      cb(s.join(''));
+    });
+  }
+
+  ctafig && ctafig.addEventListener('click', function (e) {
+    if (coarse) {
+      e.preventDefault();
+      location.href = 'mailto:?subject=' + encodeURIComponent('flow breakdown \u2014 for your mac') +
+        '&body=' + encodeURIComponent('open this on your mac: ' + location.origin + location.pathname);
+      return;
+    }
+    if (!navigator.clipboard || !navigator.clipboard.writeText) return;   // anchor falls back to #download
+    e.preventDefault();
+    teardownSVG(function (svg) {
+      var done = function () {
+        if (ctaLabel) {
+          ctaLabel.textContent = 'copied \u00B7 now \u2318V in figma';
+          setTimeout(function () { ctaLabel.textContent = 'copy to figma'; }, 2600);
+        }
+      };
+      var fail = function () { location.href = '#download'; };
+      try {                                   // writeText can throw synchronously
+        navigator.clipboard.writeText(svg).then(done, fail);
+      } catch (err) { fail(); }
+    });
+  });
+
+  // ── free grabbing: on the open canvas, the cards are really draggable ──
+  cards.forEach(function (c, i) {
+    c.addEventListener('pointerdown', function (e) {
+      if (!stage || !stage.classList.contains('canvasmode')) return;
+      e.preventDefault();
+      var sx = e.clientX, sy = e.clientY, ox = drags[i].x, oy = drags[i].y;
+      try { c.setPointerCapture(e.pointerId); } catch (e2) {}
+      function move(ev) {
+        drags[i].x = ox + ev.clientX - sx;
+        drags[i].y = oy + ev.clientY - sy;
+        render(progress);
+      }
+      function up() {
+        c.removeEventListener('pointermove', move);
+        c.removeEventListener('pointerup', up);
+        c.removeEventListener('pointercancel', up);
+      }
+      c.addEventListener('pointermove', move);
+      c.addEventListener('pointerup', up);
+      c.addEventListener('pointercancel', up);
+    });
+  });
+
+  function armOnce() {
+    document.body.classList.add('armed');
+    measure();
+    if (!geo) { document.body.classList.remove('armed'); return; }
+    sync();                          // wherever the page is, that is the state
+  }
+
+  picks.forEach(function (b, i) {
+    b.addEventListener('click', function () {
+      if (i === current) return;
+      // Selecting swaps the recording in place. Progress belongs to the scroll
+      // position alone, so the new screens appear at exactly the state the page
+      // is scrolled to — nothing plays, nothing rewinds, nothing moves the page.
+      picks.forEach(function (b) { b.querySelector('img').style.opacity = '1'; });
+      applyRecording(i);
+      requestAnimationFrame(function () { measure(); render(progress); });
+    });
+  });
+
+  addEventListener('resize', function () { measure(); sync(); });
+
+  // Only rewind once the real layout is settled, so the end state is never
+  // replaced by a half-measured one.
+  picks.forEach(function (b) {
+    var im = b.querySelector('img');
+    if (im && !im.complete) im.addEventListener('load', function () { measure(); sync(); });
+  });
+
+  if (document.readyState !== 'loading') armOnce();
+  else addEventListener('DOMContentLoaded', armOnce);
+
+  // Warm the other recordings' screens after load, so the first selection swap
+  // never shows an empty card while its image arrives.
+  addEventListener('load', function () {
+    RECORDINGS.forEach(function (r, i) {
+      if (i === current) return;
+      for (var n = 1; n <= 3; n++) {
+        new Image().src = 'assets/' + r.slug + n + '.jpg';
+        new Image().src = 'assets/' + r.slug + n + '@2x.jpg';
+      }
+    });
+  });
+})();
