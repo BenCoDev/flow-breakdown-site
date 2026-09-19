@@ -95,6 +95,7 @@
   var notes = slots.map(function (s) { return s.querySelector('.note'); });
   var labels= slots.map(function (s) { return s.querySelector('.label'); });
   var ghosts= slots.map(function (s) { return s.querySelector('.ghost'); });
+  var edges = [].slice.call(board.querySelectorAll('.edge img'));
 
   // Each recording is hard-wired to its own three screens. Voice notes and feelings are
   // illustrative observations, not transcripts of anyone's actual recording.
@@ -167,6 +168,10 @@
       nt.querySelector('span').textContent = r.notes[n][1];
     });
     picks.forEach(function (b, n) { b.setAttribute('aria-pressed', String(n === i)); });
+    if (edges.length === 2) {
+      edges[0].src = 'assets/' + r.slug + '3.jpg';   // left edge mirrors the far right screen
+      edges[1].src = 'assets/' + r.slug + '1.jpg';   // right edge mirrors the far left one
+    }
     if (focusTime)  focusTime.textContent  = r.notes[1][0].toUpperCase();
     if (focusQuote) focusQuote.textContent = r.notes[1][1].replace(/^\u201C|\u201D$/g, '');
     drags.forEach(function (d) { d.x = 0; d.y = 0; });
@@ -356,6 +361,11 @@
 
     if (waiting) waiting.style.opacity = String(1 - EASE(span(pf, 0, 0.08)));
 
+    // the edge screens: arrive with the frames, recede under the lenses,
+    // and leave for good when the canvas gathers the chosen three
+    var edgeOp = 0.45 * EASE(span(pf, 0.9, 1)) * (1 - 0.5 * Math.max(V, P)) * (1 - C);
+    [].forEach.call(board.querySelectorAll('.edge'), function (el) { el.style.opacity = String(edgeOp); });
+
     if (focus) {
       focus.style.opacity = String(V);
       focus.style.translate = '-50% ' + mix(14, 0, V).toFixed(1) + 'px';
@@ -424,13 +434,15 @@
     setProgress(len > 0 ? (window.scrollY - g.start) / len : 1);
   }
 
+  // The hand-rolled sync is ALWAYS on — it is the guarantee. Motion's scroll()
+  // rides along when present for smoother sub-frame timing, but its subscription
+  // was observed to die silently after a window resize, and a scroll story that
+  // stops scrubbing reads as a broken page. Never make Motion the only driver.
+  addEventListener('scroll', sync, { passive: true });
   if (window.Motion && Motion.scroll) {
     Motion.scroll(function (p) {
       setProgress(typeof p === 'number' ? p : 0);
     }, { target: storyzone, offset: ['start 0.85', 'end 1'] });
-  } else {
-    addEventListener('scroll', sync, { passive: true });
-    addEventListener('resize', sync);
   }
 
   // ── the button: "break it down" DRIVES the scroll down ──
