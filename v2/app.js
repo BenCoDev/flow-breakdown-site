@@ -95,7 +95,43 @@
   var notes = slots.map(function (s) { return s.querySelector('.note'); });
   var labels= slots.map(function (s) { return s.querySelector('.label'); });
   var ghosts= slots.map(function (s) { return s.querySelector('.ghost'); });
-  var edges = [].slice.call(board.querySelectorAll('.edge img'));
+  // The rest of the flow — real screens flanking the chosen three. Flow order
+  // is preserved left to right; `split` says how many sit before the trio.
+  var XTRAS = { card: { files: ['x_card1.jpg','x_card2.jpg','x_card3.jpg','x_card4.jpg','x_card5.jpg',
+                                'x_card6.jpg','x_card7.jpg','x_card8.jpg','x_card9.jpg','x_card10.jpg','x_card11.jpg'],
+                        split: 5 } };
+  var xtraEls = [];
+  function buildXtras() {
+    xtraEls.forEach(function (el) { el.remove(); });
+    xtraEls = [];
+    var cfg = XTRAS[RECORDINGS[current].slug];
+    if (!cfg) return;
+    cfg.files.forEach(function (f, i) {
+      var leftSide = i < cfg.split;
+      var k = leftSide ? cfg.split - i : i - cfg.split + 1;   // distance from the trio
+      var el = document.createElement('div');
+      el.className = 'xtra';
+      el.setAttribute('aria-hidden', 'true');
+      el.dataset.k = k;
+      // the near neighbours fly like the trio; give them their own pile poses
+      var pose = leftSide ? [[-6, -12, 6], [5, -8, -8]] : [[6, 12, 8], [-5, 9, -6]];
+      if (k <= 2) {
+        el.dataset.rot = pose[k - 1][0];
+        el.dataset.dx = pose[k - 1][1];
+        el.dataset.dy = pose[k - 1][2];
+      }
+      el.style.left = leftSide
+        ? 'calc(50% - ' + (580 + (k - 1) * 240) + 'px)'
+        : 'calc(50% + ' + (380 + (k - 1) * 240) + 'px)';
+      var im = document.createElement('img');
+      im.src = 'assets/' + f;
+      im.srcset = 'assets/' + f + ' 1x, assets/' + f.replace('.jpg', '@2x.jpg') + ' 2x';
+      im.alt = '';
+      el.appendChild(im);
+      board.insertBefore(el, board.firstChild);
+      xtraEls.push(el);
+    });
+  }
 
   // Each recording is hard-wired to its own three screens. Voice notes and feelings are
   // illustrative observations, not transcripts of anyone's actual recording.
@@ -168,10 +204,7 @@
       nt.querySelector('span').textContent = r.notes[n][1];
     });
     picks.forEach(function (b, n) { b.setAttribute('aria-pressed', String(n === i)); });
-    if (edges.length === 2) {
-      edges[0].src = 'assets/' + r.slug + '3.jpg';   // left edge mirrors the far right screen
-      edges[1].src = 'assets/' + r.slug + '1.jpg';   // right edge mirrors the far left one
-    }
+    buildXtras();
     if (focusTime)  focusTime.textContent  = r.notes[1][0].toUpperCase();
     if (focusQuote) focusQuote.textContent = r.notes[1][1].replace(/^\u201C|\u201D$/g, '');
     drags.forEach(function (d) { d.x = 0; d.y = 0; });
@@ -183,6 +216,7 @@
   function measure() {
     // Clear transforms so we measure the true laid-out (end) positions.
     cards.forEach(function (c) { c.style.transform = ''; c.style.clipPath = ''; });
+    xtraEls.forEach(function (el) { el.style.transform = ''; el.style.clipPath = ''; });
     var srect = originCell().getBoundingClientRect();
     var g = { src: srect, cards: [], pile: null };
     cards.forEach(function (c) { g.cards.push(c.getBoundingClientRect()); });
@@ -199,6 +233,7 @@
     // caption and the button for the whole of the settle.
     var mid = g.cards[1] || first;
     g.pile = { x: mid.left, y: mid.top };
+    g.xtras = xtraEls.map(function (el) { return el.getBoundingClientRect(); });
 
     // story landmarks, in scrollY terms. The stage's natural top is the zone's
     // top (first child); it pins STAGETOP below the viewport top. The flight
@@ -361,10 +396,40 @@
 
     if (waiting) waiting.style.opacity = String(1 - EASE(span(pf, 0, 0.08)));
 
-    // the edge screens: arrive with the frames, recede under the lenses,
-    // and leave for good when the canvas gathers the chosen three
-    var edgeOp = 0.45 * EASE(span(pf, 0.9, 1)) * (1 - 0.5 * Math.max(V, P)) * (1 - C);
-    [].forEach.call(board.querySelectorAll('.edge'), function (el) { el.style.opacity = String(edgeOp); });
+    // The rest of the flow. The near neighbours (k<=2) FLY out of the roll in
+    // pairs behind the trio — same FLIP, own pile poses — then settle into the
+    // strip at their dimmed strength. The far ones ripple in by distance. All
+    // of them recede under the lenses and leave when the canvas gathers three.
+    var XBASE = [0.55, 0.42, 0.32, 0.22, 0.15, 0.10];
+    var XSTART = { 1: 0.310, 2: 0.365 };
+    var lensC = (1 - 0.5 * Math.max(V, P)) * (1 - C);
+    xtraEls.forEach(function (el, idx) {
+      var k = +el.dataset.k;
+      var base = XBASE[k - 1] || 0.1;
+      if (k <= 2 && geo.xtras && geo.xtras[idx]) {
+        var a2 = XSTART[k], b2 = a2 + 0.28;
+        var lift2 = LIFT(span(pf, a2, b2));
+        var end2 = geo.xtras[idx];
+        var rot2 = parseFloat(el.dataset.rot) || 0;
+        var startX2 = geo.src.left + geo.src.width / 2 - (end2.left + end2.width / 2);
+        var startY2 = geo.src.top + geo.src.height / 2 - (end2.top + end2.height / 2);
+        var pileX2 = geo.pile.x + (parseFloat(el.dataset.dx) || 0) - end2.left;
+        var pileY2 = geo.pile.y + (parseFloat(el.dataset.dy) || 0) - end2.top;
+        var tx2 = mix(mix(startX2, pileX2, lift2), 0, settle);
+        var ty2 = mix(mix(startY2, pileY2, lift2), 0, settle);
+        var sc2 = mix(mix(geo.scale0, 1, lift2), 1, settle);
+        var rt2 = mix(mix(0, rot2, lift2), 0, settle);
+        el.style.transform = 'translate(' + tx2.toFixed(2) + 'px,' + ty2.toFixed(2) + 'px) ' +
+                             'scale(' + sc2.toFixed(4) + ') rotate(' + rt2.toFixed(2) + 'deg)';
+        var ins2 = mix(geo.inset0, 0, EASE(span(pf, a2, a2 + 0.11)));
+        el.style.clipPath = 'inset(' + ins2.toFixed(1) + 'px 0 ' + ins2.toFixed(1) + 'px 0 round 19px)';
+        el.style.zIndex = 8 - k;
+        el.style.opacity = pf <= a2 ? '0'
+          : String(mix(1, base, EASE(span(pf, b2, b2 + 0.08))) * lensC);
+      } else {
+        el.style.opacity = String(base * EASE(span(q, 0.01 + k * 0.012, 0.05 + k * 0.012)) * lensC);
+      }
+    });
 
     if (focus) {
       focus.style.opacity = String(V);
@@ -581,6 +646,7 @@
 
   function armOnce() {
     document.body.classList.add('armed');
+    buildXtras();
     measure();
     if (!geo) { document.body.classList.remove('armed'); return; }
     sync();                          // wherever the page is, that is the state
