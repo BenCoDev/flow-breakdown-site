@@ -158,8 +158,13 @@ h1 em{font-style:normal}
 .storyzone{position:relative}
 .armed .storyzone::after{content:"";display:block;height:2400px}
 .stage{
-  /* centers in tall viewports, floors at 64px under the menu bar; 676 = stage height */
-  --stagetop:max(64px, calc((100svh - 676px) / 2));
+  /* Air above the canvas: center the stage, then bias 48px upward-generous —
+     pure centering reads top-heavy because the caption+CTA hang below the
+     canvas. The upper bound guarantees the CTA never clips off the bottom;
+     the 64px floor holds under the menu bar. 676 = stage height. */
+  --stagetop:clamp(64px,
+    calc((100svh - 676px) / 2 + 48px),
+    max(64px, calc(100svh - 684px)));
   position:sticky;top:var(--stagetop);
   max-width:1200px;margin:0 auto;padding:0 var(--pad);
 }
