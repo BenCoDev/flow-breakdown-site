@@ -472,7 +472,7 @@
   // nothing moves unless the page moves. Resting mid-run is now a legitimate
   // state: it reads as paused-where-you-are, because it is.
   //
-  // The mapping (Motion's scroll(), vendored; hand fallback below must match):
+  // The mapping:
   //   p = 0  board top reaches 85% down the viewport   (offset 'start 0.85')
   //   p = 1  board bottom reaches the viewport bottom  (offset 'end 1')
 
@@ -499,16 +499,16 @@
     setProgress(len > 0 ? (window.scrollY - g.start) / len : 1);
   }
 
-  // The hand-rolled sync is ALWAYS on — it is the guarantee. Motion's scroll()
-  // rides along when present for smoother sub-frame timing, but its subscription
-  // was observed to die silently after a window resize, and a scroll story that
-  // stops scrubbing reads as a broken page. Never make Motion the only driver.
-  addEventListener('scroll', sync, { passive: true });
-  if (window.Motion && Motion.scroll) {
-    Motion.scroll(function (p) {
-      setProgress(typeof p === 'number' ? p : 0);
-    }, { target: storyzone, offset: ['start 0.85', 'end 1'] });
-  }
+  // ONE driver, rAF-coalesced. Motion's scroll() used to ride along here and
+  // caused visible flicker: it updates on the compositor's timeline while this
+  // updates on the scroll event, and their p values disagree by a hair and a
+  // frame — every scrolled frame rendered twice with two slightly different
+  // states. (Its subscription had also been seen dying after a resize.) A p
+  // attached to scroll must have exactly one writer.
+  var rafId = 0;
+  addEventListener('scroll', function () {
+    if (!rafId) rafId = requestAnimationFrame(function () { rafId = 0; sync(); });
+  }, { passive: true });
 
   // ── the button: "break it down" DRIVES the scroll down ──
   // One decisive ease-out glide from wherever the page is to the end of the zone:

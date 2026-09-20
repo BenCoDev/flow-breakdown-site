@@ -1,7 +1,7 @@
 # Landing page — v2
 
-A standalone static landing page. No build step, one vendored dependency: `motion.js`
-(Motion 13, UMD) plus three files of our own and a folder of images. Built to drop into the Pages repo at a **`/v2` path** so it sits alongside the existing
+A standalone static landing page. No build step, no dependencies: three files and a folder
+of images. Built to drop into the Pages repo at a **`/v2` path** so it sits alongside the existing
 support and privacy pages rather than replacing the index, which the App Store listing points at.
 
 ```
@@ -83,8 +83,11 @@ state *is* your position — and autoplay is impossible by construction, because
 unless the page moves. Resting mid-run is a legitimate state under this model: it reads as
 paused-where-you-are, because it is.
 
-The mapping, via Motion's `scroll()` (vendored `motion.js`; the hand fallback in `sync()` must
-stay identical):
+The mapping, computed by `sync()` — the page's ONE scroll driver, rAF-coalesced. Motion's
+`scroll()` used to drive this too and caused visible flicker: it updates on the compositor's
+timeline while `sync` runs off the scroll event, and their `p` values disagree by a hair and a
+frame, so every scrolled frame rendered twice with two slightly different states. Motion is gone
+from the page entirely (147 KB lighter). **A scroll-attached `p` must have exactly one writer.**
 
 | p | when |
 | --- | --- |
