@@ -437,13 +437,13 @@ h1 em{font-style:normal}
 }
 
 /* ── bands ───────────────────────────────── */
-.band{padding:clamp(56px,9vh,104px) var(--pad) 0;max-width:1200px;margin:0 auto}
+.band{padding:clamp(80px,12vh,128px) var(--pad) 0;max-width:1200px;margin:0 auto}
 .band h2{font-size:clamp(24px,3.4vw,34px);letter-spacing:-.022em}
-.band > .lede{margin-top:8px;font-size:17px}
+.band > .lede{margin-top:10px;font-size:17px}
 
 .steps{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
-  gap:clamp(24px,4vw,40px);margin-top:36px}
-.steps li{border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:8px}
+  gap:clamp(24px,4vw,40px);margin-top:56px}
+.steps li{border-top:1px solid var(--line);padding-top:16px;display:flex;flex-direction:column;gap:12px}
 .steps .n{font-family:var(--mono);font-size:12px;color:var(--ink-3)}
 .steps h3{font-size:20px}
 .steps p{color:var(--ink-2);font-size:16px}
@@ -453,14 +453,14 @@ h1 em{font-style:normal}
 .voice h2{font-size:clamp(24px,3.4vw,34px)}
 .voice .quiet{color:var(--ink-3);font-size:15px;max-width:58ch}
 
-.details{margin-top:28px;border-top:1px solid var(--line)}
+.details{margin-top:48px;border-top:1px solid var(--line)}
 .details > div{display:grid;grid-template-columns:minmax(150px,210px) 1fr;gap:clamp(16px,4vw,40px);
   padding:22px 0;border-bottom:1px solid var(--line)}
 .details dt{font-weight:500;font-size:17px}
 .details dd{color:var(--ink-2);font-size:17px}
 @media (max-width:640px){ .details > div{grid-template-columns:1fr;gap:6px} }
 
-.close{display:flex;flex-direction:column;align-items:center;gap:44px;text-align:center}
+.close{display:flex;flex-direction:column;align-items:center;gap:64px;text-align:center}
 .cta{background:color-mix(in srgb,var(--surface) 62%,transparent);
   border:1px solid var(--line);border-radius:24px;
   padding:clamp(34px,6vw,62px) clamp(24px,5vw,64px);
@@ -470,9 +470,9 @@ h1 em{font-style:normal}
 .makernote blockquote{font-style:italic;color:var(--ink-2);font-size:17px;line-height:1.5}
 .makernote figcaption{font-size:14px;color:var(--ink-3)}
 
-footer{max-width:1200px;margin:0 auto;padding:56px var(--pad) 64px;
+footer{max-width:1200px;margin:0 auto;padding:64px var(--pad) 72px;
   display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;
-  border-top:1px solid var(--line);margin-top:clamp(56px,9vh,104px);
+  border-top:1px solid var(--line);margin-top:clamp(80px,12vh,128px);
   font-size:13px;color:var(--ink-3)}
 footer nav{display:flex;gap:20px}
 footer a{text-decoration:none}
