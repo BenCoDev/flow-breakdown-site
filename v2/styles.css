@@ -158,7 +158,8 @@ h1 em{font-style:normal}
 .storyzone{position:relative}
 .armed .storyzone::after{content:"";display:block;height:2400px}
 .stage{
-  --stagetop:64px;
+  /* centers in tall viewports, floors at 64px under the menu bar; 676 = stage height */
+  --stagetop:max(64px, calc((100svh - 676px) / 2));
   position:sticky;top:var(--stagetop);
   max-width:1200px;margin:0 auto;padding:0 var(--pad);
 }

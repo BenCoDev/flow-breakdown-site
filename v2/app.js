@@ -240,10 +240,9 @@
     // story landmarks, in scrollY terms. The stage's natural top is the zone's
     // top (first child); it pins STAGETOP below the viewport top. The flight
     // window Wf is the share of the full range spent travelling to the pin.
-    // The pin offset adapts: on tall viewports the stage CENTERS itself instead
-    // of hugging the menu bar; 64px is the floor for short ones.
-    STAGETOP = Math.max(64, Math.round((window.innerHeight - stage.offsetHeight) / 2));
-    stage.style.setProperty('--stagetop', STAGETOP + 'px');
+    // The pin offset lives in CSS (max(64px, centered)); read the resolved
+    // value so the flight window Wf stays exact on every viewport.
+    STAGETOP = parseFloat(getComputedStyle(stage).top) || 64;
 
     var zr = storyzone.getBoundingClientRect();
     var zTop = window.scrollY + zr.top;
