@@ -97,9 +97,11 @@
   var ghosts= slots.map(function (s) { return s.querySelector('.ghost'); });
   // The rest of the flow — real screens flanking the chosen three. Flow order
   // is preserved left to right; `split` says how many sit before the trio.
-  var XTRAS = { card: { files: ['x_card1.jpg','x_card2.jpg','x_card3.jpg','x_card4.jpg','x_card5.jpg',
-                                'x_card6.jpg','x_card7.jpg','x_card8.jpg','x_card9.jpg','x_card10.jpg','x_card11.jpg'],
-                        split: 5 } };
+  var XTRAS = {
+    card: { files: ['x_card1.jpg','x_card2.jpg','x_card3.jpg','x_card4.jpg','x_card5.jpg','x_card6.jpg','x_card7.jpg','x_card8.jpg','x_card9.jpg','x_card10.jpg','x_card11.jpg'], split: 5 },
+    out:  { files: ['x_out1.jpg','x_out2.jpg','x_out3.jpg','x_out4.jpg','x_out5.jpg','x_out6.jpg','x_out7.jpg','x_out8.jpg','x_out9.jpg','x_out10.jpg'], split: 5 },
+    our:  { files: ['x_our1.jpg','x_our2.jpg','x_our3.jpg','x_our4.jpg','x_our5.jpg','x_our6.jpg','x_our7.jpg','x_our8.jpg','x_our9.jpg','x_our10.jpg'], split: 5 }
+  };
   var xtraEls = [];
   function buildXtras() {
     xtraEls.forEach(function (el) { el.remove(); });
@@ -185,6 +187,7 @@
   var current = 0;
 
   function applyRecording(i) {
+    current = i;                       // FIRST — buildXtras and originCell read it
     var r = RECORDINGS[i];
     cards.forEach(function (c, n) {
       var img = c.querySelector('img');
@@ -208,7 +211,6 @@
     if (focusTime)  focusTime.textContent  = r.notes[1][0].toUpperCase();
     if (focusQuote) focusQuote.textContent = r.notes[1][1].replace(/^\u201C|\u201D$/g, '');
     drags.forEach(function (d) { d.x = 0; d.y = 0; });
-    current = i;
   }
 
   var geo = null;
