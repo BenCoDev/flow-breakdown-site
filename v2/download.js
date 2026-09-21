@@ -37,7 +37,7 @@
     form.reset();
     form.hidden = false;
     feedback.textContent = '';
-    title.textContent = unavailable ? 'the download link is coming.' : 'a little reminder for your Mac.';
+    title.textContent = unavailable ? 'The download link is coming.' : 'A little reminder for your Mac.';
     description.textContent = unavailable
       ? 'The download isn’t available on this page yet. Send yourself the page to come back later.'
       : 'Flow Breakdown is a Mac app. Email yourself a link to open when you’re back at your desk.';
@@ -99,7 +99,7 @@
       if (!response.ok || (await response.json()).delivered !== true) throw new Error('Delivery not confirmed');
       if (controller.signal.aborted || request !== controller || !dialog.open) return;
       form.hidden = true;
-      title.textContent = 'check your inbox.';
+      title.textContent = 'Check your inbox.';
       description.textContent = 'Your link is ready for when you’re back on your Mac.';
       feedback.textContent = 'Sent to ' + recipient;
     } catch (error) {

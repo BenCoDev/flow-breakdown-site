@@ -17,7 +17,8 @@ Deploy by copying this folder into `BenCoDev/flow-breakdown-site` as `v2/`, givi
 names keep their spelling: **Figma**, **Mac**, **Flow Breakdown**, and **App Breakdown**.
 Controls use sentence case: **How it works**, **Let’s take a closer look**, **Copy this example
 to Figma**, **Get it on the Mac App Store**, **A few practical details**, and **Send a link to
-my Mac**. Practical body paragraphs and reminder helper sentences also stay in sentence case.
+my Mac**. Practical body paragraphs, dialog headings, helper sentences, status/error messages,
+and demo UI labels also use sentence case. Demo names retain their capitals: Mia, Sam, and Leo.
 The inspiration credit remains the narrative aside **inspired by App Breakdown ↗**.
 
 ### Download CTA and mobile email handoff
@@ -237,7 +238,7 @@ still become a board.” The close section owns `id="download"`; download routin
 **"Copy this example to Figma" really copies.** On fine-pointer devices the click builds an SVG of the current
 teardown — the three screens embedded as JPEG data-URIs, chips, labels, voice notes — and puts it
 on the pasteboard (`teardownSVG()` in `app.js`); ⌘V in Figma lands it as editable layers. The
-successful copy reveals **"copied. open Figma and paste with ⌘V."**, **"now your turn."**,
+successful copy reveals **"Copied. Open Figma and paste with ⌘V."**, **"now your turn."**,
 and **"try it with your own recording."** The shortcut changes to Ctrl+V on other desktop
 platforms. A dark **Get it on the Mac App Store** button and a quiet **A few practical details ↓**
 link to `#get` continue the story. The footer reserves that space

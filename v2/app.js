@@ -226,7 +226,7 @@
     });
     picks.forEach(function (b, n) { b.setAttribute('aria-pressed', String(n === i)); });
     buildXtras();
-    if (focusTime)  focusTime.textContent  = r.notes[1][0].toUpperCase();
+    if (focusTime)  focusTime.textContent  = r.notes[1][0];
     if (focusQuote) focusQuote.textContent = r.notes[1][1].replace(/^\u201C|\u201D$/g, '');
     drags.forEach(function (d) { d.x = 0; d.y = 0; });
   }
@@ -666,7 +666,7 @@
         if (uris[i]) s.push('<image x="' + x + '" y="66" width="200" height="433" clip-path="url(#scr' + i + ')" href="' + uris[i] + '"/>');
         s.push('<rect x="' + x + '" y="66" width="200" height="433" rx="19" stroke="#00000022"/>');
         s.push('<rect x="' + (x - 9) + '" y="511" width="236" height="42" rx="9" fill="#FFFFFF" stroke="#E3E3E8"/>');
-        s.push('<text x="' + x + '" y="526" font-family="SF Pro Text, Inter, sans-serif" font-size="9" font-weight="600" fill="#FF9500">' + esc(r.notes[i][0].toUpperCase()) + '</text>');
+        s.push('<text x="' + x + '" y="526" font-family="SF Pro Text, Inter, sans-serif" font-size="9" font-weight="600" fill="#FF9500">' + esc(r.notes[i][0]) + '</text>');
         s.push('<text x="' + x + '" y="542" font-family="SF Pro Text, Inter, sans-serif" font-size="11" fill="#1C1C1E">' + esc(r.notes[i][1]) + '</text>');
       }
       s.push('</svg>');
@@ -683,7 +683,7 @@
     e.preventDefault();
     if (copyPending) return;
     if (!navigator.clipboard || !navigator.clipboard.writeText) {
-      copyFailure = 'clipboard access isn’t available in this browser.';
+      copyFailure = 'Clipboard access isn’t available in this browser.';
       render(progress);
       return;
     }
@@ -700,14 +700,14 @@
         copiedRecording = recording;
         copyPending = false;
         var shortcut = /Mac|iPhone|iPad|iPod/.test(navigator.platform) ? '⌘V' : 'Ctrl+V';
-        copyConfirmation.textContent = 'copied. open Figma and paste with ' + shortcut + '.';
+        copyConfirmation.textContent = 'Copied. Open Figma and paste with ' + shortcut + '.';
         render(progress);
         if (hadFocus && !postCopy.hidden) yourTurn.focus({ preventScroll: true });
       });
     }).catch(function () {
       if (attempt !== copyAttempt) return;
       copyPending = false;
-      copyFailure = 'couldn’t copy. try again with this page in focus.';
+      copyFailure = 'Couldn’t copy. Try again with this page in focus.';
       render(progress);
     });
   });
