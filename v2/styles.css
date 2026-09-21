@@ -206,7 +206,6 @@ h1{font-size:clamp(32px,4.4vw,52px);line-height:1.08;letter-spacing:-.032em;font
 .your-recording{font-size:14px;line-height:20px;color:var(--ink-2)}
 .post-copy .download-cta{font-size:15px;padding:6px 16px 6px 10px;min-height:44px}
 .post-copy .store-icon{width:30px;height:30px}
-.post-copy .narrative-link{text-decoration:none}
 .post-copy:not([hidden]) ~ .mates{display:none}
 @media (max-width:720px){
   .stage{--story-footer-height:268px}

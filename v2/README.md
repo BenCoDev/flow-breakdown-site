@@ -16,7 +16,7 @@ Deploy by copying this folder into `BenCoDev/flow-breakdown-site` as `v2/`, givi
 **Current casing rule.** Short narrative headings and captions stay lowercase, while proper
 names keep their spelling: **Figma**, **Mac**, **Flow Breakdown**, and **App Breakdown**.
 Controls use sentence case: **How it works**, **Let’s take a closer look**, **Copy this example
-to Figma**, **Download for Mac**, **A few practical details**, and **Send a link to
+to Figma**, **Download for Mac**, and **Send a link to
 my Mac**. Practical body paragraphs, dialog headings, helper sentences, status/error messages,
 and demo UI labels also use sentence case. Demo names retain their capitals: Mia, Sam, and Leo.
 The inspiration credit remains the narrative aside **inspired by App Breakdown ↗**.
@@ -106,7 +106,7 @@ invisible 44px target. Hover adds contrast and underlines only `.narrative-label
 `.narrative-arrow` never receives an underline. On fine pointers with hover and
 `prefers-reduced-motion: no-preference`, the arrow loops down 3px and back (`0 → 3px → 0`,
 1.2 seconds, `ease-in-out`) while hovered. It stays still under reduced motion. This applies
-to the hero invitation, the story continuation, and the post-copy practical-details link
+to the hero invitation and the story continuation
 without changing their hit areas or navigation. Filled buttons are reserved for copying the
 example and downloading the app. The hero promise stays above the first asset. This hover
 refinement is implemented on the live page; the Figma prototype's motion is unchanged.
@@ -260,8 +260,8 @@ teardown — the three screens embedded as JPEG data-URIs, chips, labels, voice 
 on the pasteboard (`teardownSVG()` in `app.js`); ⌘V in Figma lands it as editable layers. The
 successful copy reveals **"Copied. Open Figma and paste with ⌘V."**, **"now your turn."**,
 and **"try it with your own recording."** The shortcut changes to Ctrl+V on other desktop
-platforms. A gray **Download for Mac** button with the App Store icon and a quiet **A few practical details ↓**
-link to `#get` continue the story. The footer reserves that space
+platforms. This step ends with the gray **Download for Mac** button and App Store icon;
+there is no additional practical-details continuation. The footer reserves its space
 beforehand: copying does not move the canvas or scroll the page. The confirmation returns when
 the visitor scrolls back to this scene; selecting another recording clears it. Keyboard focus
 moves to the new heading without scrolling.
