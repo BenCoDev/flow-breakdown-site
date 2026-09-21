@@ -78,6 +78,11 @@ window but vanishes on this light canvas, so it mixes `--surface` 92% → 62% in
 
 ### Narrative continuations
 
+The walkthrough reads **asset → narrative → next step**. Narrative captions use 16px regular
+primary text; continuation links use 14px regular secondary text, with a small arrow and an
+invisible 44px target. Hover adds contrast and an underline. Filled buttons are reserved for
+copying the example and downloading the app. The hero promise stays above the first asset.
+
 The hero's **let’s take a closer look ↓** and the continuation beneath each caption use
 quiet text styling. The same continuation button changes with scroll position:
 **talked while recording? → and how did it feel? → add your own take → show your team**.

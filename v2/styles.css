@@ -123,12 +123,12 @@ button,a{touch-action:manipulation}
 .download-cta{background:var(--ink);color:var(--surface)}
 /* Continuations read as the next sentence, with a comfortable invisible target. */
 .narrative-link{display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  min-height:44px;padding:10px 12px;border:0;background:none;color:var(--ink);
-  font:inherit;font-size:14px;font-weight:500;cursor:pointer;text-decoration:none}
+  min-height:44px;padding:10px 12px;border:0;background:none;color:var(--ink-2);
+  font:inherit;font-size:14px;font-weight:400;cursor:pointer;text-decoration:none}
 .narrative-link[hidden]{display:none}
 .narrative-link > span[aria-hidden]{color:var(--ink-2);transition:transform .18s ease}
 @media (hover:hover) and (pointer:fine){
-  .narrative-link:hover{text-decoration:underline;text-underline-offset:4px}
+  .narrative-link:hover{color:var(--ink);text-decoration:underline;text-underline-offset:4px}
   .narrative-link:hover > span[aria-hidden]{transform:translateY(2px)}
 }
 .fine{font-size:13px;color:var(--ink-3)}
@@ -294,6 +294,8 @@ h1{font-size:clamp(32px,4.4vw,52px);line-height:1.08;letter-spacing:-.032em;font
   width:100%;max-width:1200px;margin:0 auto;padding:0 var(--pad);
 }
 .cap{font-size:13.5px;color:var(--ink-3);text-align:center;max-width:52ch}
+/* Read the narrative before the quieter invitation underneath it. */
+.cap.scap{font-size:16px;line-height:1.5;color:var(--ink);text-wrap:balance}
 
 /* whose roll this is — attribution, not a testimonial */
 .whose{
