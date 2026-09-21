@@ -13,14 +13,60 @@ Deploy by copying this folder into `BenCoDev/flow-breakdown-site` as `v2/`, givi
 
 ## The design
 
+### Download CTA and mobile email handoff
+
+`download.js` owns the download CTAs independently of animation/reduced motion.
+Following HeyClicky's pattern, touch devices below 1024px see **send it to me** on the
+text CTAs and open a native email dialog; desktop sees **get it on the Mac App Store**.
+The header uses the Mac App Store badge on both sizes, with an accessible label describing
+the appropriate action. Narrow desktop windows keep the desktop behavior. The close section
+also offers an email link on desktop.
+
+**The live download URL is not connected:** `DOWNLOAD_URL` is currently empty. The earlier
+`example.com` DMG URL remains only in Figma as a prototype placeholder, not a live download.
+
+**Connections still required:** set `DOWNLOAD_URL` to the real public Mac App Store URL
+and optionally `EMAIL_ENDPOINT` to a transactional email service endpoint. No release
+was published in the app repository when this was implemented. Until configured, the
+desktop CTA explains that the link is unavailable and offers a reminder. Email currently
+opens a prefilled draft addressed to the visitor; it does not claim an email was sent.
+Drafts link to the public v2 page, never localhost.
+
+An email endpoint must accept `{ email }`, validate and rate-limit server-side, send the
+configured download link, and return `{ delivered: true }` only on accepted delivery.
+Keep credentials on the server. GitHub Pages cannot run this endpoint itself.
+
+Checked: dialog at 390px, Escape/focus return, syntax, and mocked mobile/desktop routing,
+email validation/encoding, public URL, and missing-release behavior. Actual email delivery
+and a real app download remain pending those connections.
+
 The page *is* a Flow Breakdown canvas — dotted background, the app's own Glass tokens, and the site
 nav rendered as a macOS menu bar (honest here, because it is a Mac app). Prompted by
 [heyclicky.com](https://www.heyclicky.com/); see `docs/landing-design.md` for what was and wasn't
 borrowed.
 
-The hero is stripped to three things: **one line, the bevel, the action.** No sub-line, no app
-icon, no hero download — the animation is the point. Download sits in the menu bar instead, so the
-only above-fold conversion is that pill; the hero's button starts the demo. Worth testing.
+**Copy B refinement · 21 September 2026.** The hero restores the direct promise
+**screen recording in. figma teardown out.**, supported by “that onboarding you just tried.
+that interaction you want to show your team.” The bevel and quiet **let’s take a closer look**
+action lead into the demo. Download remains in the menu bar; there is no app icon or download
+button in the hero. The aside now says **a flow worth keeping.**, with a quieter App Breakdown
+inspiration credit and no portrait or claim that the library belongs to Jose.
+
+The redundant **three steps, then it’s a board** band is removed. The menu's **how it works**
+link now points to `#zone`; the demo leads directly to practical questions about local processing,
+macOS 26 or later, Figma layers, optional voice, and price. Silent recordings still become a board;
+voice analysis maps the visitor's own reactions rather than claiming to judge the interface.
+
+**CTA shapes · 21 September 2026.** The header uses Apple's unmodified
+[Mac App Store SVG badge](https://developer.apple.com/app-store/marketing/guidelines/images/badge-download-on-the-mac-app-store.svg)
+at its 156.1 × 40 proportion, inside a 44px hit area. See Apple's
+[marketing guidelines](https://developer.apple.com/app-store/marketing/guidelines/).
+The header has a 64px minimum height (65px with its current content, padding, and border).
+Other filled buttons use a 10px radius; download actions are dark, while the example-copy action
+stays blue. Scoping the picker checkmark to `.cell .mark` prevents its positioning styles from
+displacing the app icon in the navigation.
+
+The closing headline is **next time, don’t leave it in your camera roll.** with no supporting lede.
 
 The credit under the roll is an **aside**: SF Pro Rounded (`ui-rounded`), seated in the tail of the
 bevel's dissolve where nothing shows through. Higher up it lands on photographs and is unreadable.
@@ -29,6 +75,30 @@ The bevel's wash is the app's recipe with one change: `white.opacity(.4 → .18)
 window but vanishes on this light canvas, so it mixes `--surface` 92% → 62% instead.
 
 ## The animation
+
+### Narrative continuations
+
+The hero's **let’s take a closer look ↓** and the continuation beneath each caption use
+quiet text styling. The same continuation button changes with scroll position:
+**talked while recording? → and how did it feel? → add your own take → show your team**.
+Each click moves scrollY through the existing driver, stopping at story progress
+`q = .26, .58, .86, .98`; manual scrolling and scrolling back produce the same states.
+The final stop exposes **copy this example to Figma**. No step counter or second
+animation driver is involved. Real gestures still cancel a glide.
+
+| Scene | Caption |
+| --- | --- |
+| Extracted screens | the key screens, pulled out for you. |
+| Voice notes | what you said, next to the screen you said it about. |
+| Feelings | your reactions, mapped across the flow. |
+| Open canvas | move things around. circle something. leave a thought. |
+| Finished teardown | now you’ve got something to talk through together. |
+
+Hidden actions are excluded from keyboard focus. The initial glide moves focus to
+the continuation without scrolling again; the last step hands focus to Copy to Figma.
+Reduced motion keeps the static board and does not show these animated-story controls.
+Captions wrap on narrow screens; continuations retain a 44px tap target. Short desktop
+windows allow the top of the tall stage to scroll away so the footer remains reachable.
 
 Ported from `macos/Sources/FlowBreakdown/Views/ExtractionScene.swift`, which is itself a port of a
 web original — the source says *"a uniform scale around its top-left, like the web version's FLIP."*
@@ -148,25 +218,34 @@ wrapped in try/catch — an inactive pointerId throws and would silently kill th
 resets drag offsets.
 
 The **voice band is gone** from the page — beat 2 demonstrates it. Its reassurance line lives on
-as the "voice is a bonus" row in the practical bits. The close section now owns `id="download"`,
-so the menu pill lands there.
+as the **voice is optional** row in the practical bits: “No voiceover needed. Silent recordings
+still become a board.” The close section owns `id="download"`; download routing remains in
+`download.js`, including its missing-link reminder while the store URL is unconnected.
 
-**"copy to figma" really copies.** On fine-pointer devices the click builds an SVG of the current
+**"copy this example to Figma" really copies.** On fine-pointer devices the click builds an SVG of the current
 teardown — the three screens embedded as JPEG data-URIs, chips, labels, voice notes — and puts it
 on the pasteboard (`teardownSVG()` in `app.js`); ⌘V in Figma lands it as editable layers. The
-label flips to "copied · now ⌘V in figma" for 2.6 s. `clipboard.writeText` can **throw
-synchronously** (unfocused document), not just reject — both paths fall back to the `#download`
-anchor, which is also the no-clipboard behaviour. Caveats: Figma substitutes the font unless the
-paster has SF Pro; the SVG mirrors the board's geometry (680×580), not the app's exact export.
-On **coarse pointers** the same button reads "send it to your mac" and opens a `mailto:` with the
-page URL — no backend, honest about being a Mac app.
+successful copy reveals **"copied. open Figma and paste with ⌘V."**, **"now your turn."**,
+and **"try it with your own recording."** The shortcut changes to Ctrl+V on other desktop
+platforms. A dark **get it on the Mac App Store** button and a quiet **a few practical details ↓**
+link to `#get` continue the story. The footer reserves that space
+beforehand: copying does not move the canvas or scroll the page. The confirmation returns when
+the visitor scrolls back to this scene; selecting another recording clears it. Keyboard focus
+moves to the new heading without scrolling.
+
+Pending copies ignore duplicate clicks. Missing images, unavailable clipboard access, and both
+synchronous throws and rejected writes show an inline error and leave the copy action available
+to retry. A recording switch invalidates any pending attempt. Caveats: Figma substitutes the
+font unless the paster has SF Pro; the SVG mirrors the board's geometry (680×580), not the app's
+exact export. On **coarse pointers** the button reads "send it to your mac" and opens the existing
+email reminder dialog. Its submit action opens a prefilled draft; it does not send mail.
 
 **Hovering the CTA summons the team.** Three Figma-multiplayer-style cursors (mia, sam, leo —
 purple/green/coral) fade in around the button and idle with slow drifts, waiting for the paste.
 Hover-gated (`hover:hover and pointer:fine`), stilled under reduced motion, `aria-hidden`. The
 names and colours are invented; change them in `index.html` if anyone real objects.
 
-**"break it down" DRIVES the scroll.** One decisive **ease-out** glide (cubic, `GLIDE_MS` =
+**“let’s take a closer look” DRIVES the scroll.** One decisive **ease-out** glide (cubic, `GLIDE_MS` =
 1100 ms full-range; partial runs scale down) from wherever the page is to the end of the zone:
 fast off the line — the tap wants the payoff — then decelerating, so the chips and notes land in
 the slow tail. (A linear drive at the timeline's own 2120 ms tempo was tried first and read as too
@@ -187,9 +266,10 @@ finished board. Nothing plays, nothing rewinds, nothing moves the page. The sele
 never hidden and the used-thumbnail dim follows `p` like everything else, so it undoes itself when
 you scroll back up.
 
-**Anchor jumps are coherent now, not dangerous.** `#how` scrolls past the zone, so the board
+**Anchor jumps are coherent now, not dangerous.** `#get` scrolls past the zone, so the board
 completes en route — and scrolling back up rewinds it. Under the fired model those same jumps
 either burned the play or autoplayed it; under the attached model there is nothing to burn.
+The navigation's **how it works** link points to `#zone`, the start of the demonstration.
 
 **The trade to know about:** a visitor who never scrolls and never taps sees the *before* state —
 the roll and the labelled empty canvas — and that is fine: the page is honest at every scroll

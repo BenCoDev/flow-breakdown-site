@@ -84,6 +84,19 @@
   var marquee = document.getElementById('marquee');
   var scaps   = [].slice.call(document.querySelectorAll('.scap'));
   var ctafig  = document.getElementById('ctafig');
+  var storyNext = document.getElementById('story-next');
+  var storyNextLabel = document.getElementById('story-next-label');
+  var postCopy = document.getElementById('post-copy');
+  var copyConfirmation = document.getElementById('copy-confirmation');
+  var copyFeedback = document.getElementById('copy-feedback');
+  var yourTurn = document.getElementById('your-turn');
+  var copiedRecording = null;
+  var copyPending = false;
+  var copyAttempt = 0;
+  var copyFailure = '';
+  var storyStops = [0.26, 0.58, 0.86, 0.98];
+  var storyInvitations = ['talked while recording?', 'and how did it feel?', 'add your own take', 'show your team'];
+  var nextBeat = 0;
   if (!extract || !board || !picks.length) return;
 
   // the cards fly out of whichever cell is picked
@@ -187,6 +200,11 @@
   var current = 0;
 
   function applyRecording(i) {
+    // A different recording needs its own successful copy. Ignore any old result.
+    copiedRecording = null;
+    copyPending = false;
+    copyFailure = '';
+    copyAttempt++;
     current = i;                       // FIRST — buildXtras and originCell read it
     var r = RECORDINGS[i];
     cards.forEach(function (c, n) {
@@ -452,10 +470,21 @@
     }
     if (scribble) { scribble.style.opacity = String(A); scribble.style.translate = '0 ' + mix(-8, 0, A).toFixed(1) + 'px'; }
     if (marquee) { marquee.style.opacity = String(G); marquee.style.scale = String(mix(1.02, 1, G).toFixed(3)); }
+    var showPostCopy = copiedRecording === current && G > 0.5;
+    var focusInPostCopy = postCopy && postCopy.contains(document.activeElement);
+    if (postCopy) postCopy.hidden = !showPostCopy;
+    if (copyFeedback) {
+      copyFeedback.hidden = !copyFailure || G <= 0.5;
+      if (copyFeedback.textContent !== copyFailure) copyFeedback.textContent = copyFailure;
+    }
     if (ctafig) {
-      ctafig.style.opacity = String(G);
+      ctafig.style.opacity = showPostCopy ? '0' : String(G);
       ctafig.style.translate = '-50% ' + mix(10, 0, G).toFixed(1) + 'px';
-      ctafig.style.pointerEvents = G > 0.5 ? 'auto' : 'none';
+      ctafig.style.pointerEvents = G > 0.5 && !showPostCopy ? 'auto' : 'none';
+      ctafig.style.visibility = G > 0.5 && !showPostCopy ? 'visible' : 'hidden';
+      ctafig.setAttribute('aria-busy', String(copyPending));
+      ctafig.setAttribute('aria-disabled', String(copyPending));
+      if (ctaLabel) ctaLabel.textContent = copyPending ? 'copying…' : coarse ? 'send it to your mac' : 'copy this example to Figma';
     }
     if (stage) stage.classList.toggle('canvasmode', C > 0.5);
 
@@ -463,10 +492,26 @@
       EASE(span(pf, 0.9, 1)) * (1 - EASE(span(q, 0.04, 0.10))),
       bump(q, 0.10, 0.16, 0.32, 0.38),
       bump(q, 0.44, 0.50, 0.60, 0.66),
-      C * (1 - EASE(span(q, 0.84, 0.90))),
-      G
+      C * (1 - EASE(span(q, 0.87, 0.93))),
+      showPostCopy || copyFailure ? 0 : G
     ];
-    scaps.forEach(function (s2, i) { s2.style.opacity = String(capOps[i] || 0); });
+    scaps.forEach(function (s2, i) {
+      s2.style.opacity = String(capOps[i] || 0);
+      s2.setAttribute('aria-hidden', capOps[i] > 0.5 ? 'false' : 'true');
+    });
+    if (storyNext) {
+      // Derive the invitation from this same scroll position, including the gaps
+      // between caption fades. Clicking never maintains a separate step counter.
+      nextBeat = q < 0.10 ? 0 : q < 0.40 ? 1 : q < 0.66 ? 2 : 3;
+      if (storyNextLabel.textContent !== storyInvitations[nextBeat]) storyNextLabel.textContent = storyInvitations[nextBeat];
+      var nextHidden = pf < 0.98 || G > 0.5;
+      if (nextHidden && G > 0.5 && document.activeElement === storyNext) {
+        var nextFocus = showPostCopy ? yourTurn : ctafig;
+        if (nextFocus) nextFocus.focus({ preventScroll: true });
+      }
+      storyNext.hidden = nextHidden;
+    }
+    if (focusInPostCopy && !showPostCopy && storyNext && !storyNext.hidden) storyNext.focus({ preventScroll: true });
   }
 
   // ── the driver: progress is ATTACHED to the scroll position ──
@@ -516,7 +561,7 @@
     if (!rafId) rafId = requestAnimationFrame(function () { rafId = 0; sync(); });
   }, { passive: true });
 
-  // ── the button: "break it down" DRIVES the scroll down ──
+  // ── the opening invitation DRIVES the scroll down ──
   // One decisive ease-out glide from wherever the page is to the end of the zone:
   // fast off the line — the tap wants the payoff — then decelerating, so the
   // chips and notes land gently in the slow tail. Any real gesture (wheel, touch,
@@ -541,8 +586,22 @@
     addEventListener(evt, function () { glideId++; }, { passive: true });
   });
 
-  // "break it down" delivers the breakdown: it drives to the end of the flight.
-  // The story beats stay on the visitor's own scroll. Already broken? Rewind to
+  function focusContinuation() {
+    sync();
+    if (storyNext && !storyNext.hidden) storyNext.focus({ preventScroll: true });
+  }
+
+  storyNext && storyNext.addEventListener('click', function () {
+    if (!geo) return;
+    var storyRange = scrubRange();
+    var storyShare = geo.Wf || 0.3;
+    var destination = storyShare + (1 - storyShare) * storyStops[nextBeat];
+    // Exactly the same path as scrolling by hand: only scrollY changes.
+    glide(storyRange.start + destination * (storyRange.end - storyRange.start), 850, function () { sync(); });
+  });
+
+  // "let’s take a closer look" delivers the breakdown: it drives to the end of the flight.
+  // Each subsequent invitation advances that same scroll. Already broken? Rewind to
   // the start of the zone and run the flight again.
   button && button.addEventListener('click', function () {
     if (!geo) return;
@@ -550,18 +609,18 @@
     var flightDone = progress >= (geo.Wf || 0.3) + 0.05;
     if (flightDone) {
       glide(Math.max(0, g.start), 400, function () {
-        glide(scrubRange().flightEnd, GLIDE_MS);
+        glide(scrubRange().flightEnd, GLIDE_MS, focusContinuation);
       });
     } else {
       var len2 = g.flightEnd - g.start;
       var frac = len2 > 0 ? clamp((g.flightEnd - window.scrollY) / len2, 0, 1) : 0;
-      glide(g.flightEnd, Math.max(450, GLIDE_MS * frac));
+      glide(g.flightEnd, Math.max(450, GLIDE_MS * frac), focusContinuation);
     }
   });
 
   // ── "copy to figma" really copies ──
   // An SVG of the current teardown goes to the pasteboard; ⌘V in Figma lands it
-  // as editable layers — the landing page ends by doing the thing the app does.
+  // as editable layers. Success then invites the visitor to try their own recording.
   // On touch there is no pasteboard story: the button emails the page to your mac.
   var CHIP_OFF = [0, 12, 8];
   var coarse = matchMedia('(pointer: coarse)').matches;
@@ -569,21 +628,32 @@
   if (coarse && ctaLabel) ctaLabel.textContent = 'send it to your mac';
 
   function imgData(im) {
-    return new Promise(function (res) {
-      var go = function () {
-        var cv = document.createElement('canvas');
-        cv.width = im.naturalWidth; cv.height = im.naturalHeight;
-        cv.getContext('2d').drawImage(im, 0, 0);
-        try { res(cv.toDataURL('image/jpeg', 0.85)); } catch (err) { res(null); }
+    return new Promise(function (res, reject) {
+      var timeout = setTimeout(function () { fail(); }, 10000);
+      var cleanup = function () {
+        clearTimeout(timeout);
+        im.removeEventListener('load', go);
+        im.removeEventListener('error', fail);
       };
-      if (im.complete && im.naturalWidth) go(); else im.addEventListener('load', go, { once: true });
+      var fail = function () { cleanup(); reject(new Error('Screen image unavailable')); };
+      var go = function () {
+        cleanup();
+        try {
+          var cv = document.createElement('canvas');
+          cv.width = im.naturalWidth; cv.height = im.naturalHeight;
+          cv.getContext('2d').drawImage(im, 0, 0);
+          res(cv.toDataURL('image/jpeg', 0.85));
+        } catch (err) { reject(err); }
+      };
+      if (im.complete) { if (im.naturalWidth) go(); else fail(); }
+      else { im.addEventListener('load', go, { once: true }); im.addEventListener('error', fail, { once: true }); }
     });
   }
   function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
-  function teardownSVG(cb) {
+  function teardownSVG() {
     var r = RECORDINGS[current];
-    Promise.all(cards.map(function (c) { return imgData(c.querySelector('img')); })).then(function (uris) {
+    return Promise.all(cards.map(function (c) { return imgData(c.querySelector('img')); })).then(function (uris) {
       var s = ['<svg xmlns="http://www.w3.org/2000/svg" width="680" height="580" viewBox="0 0 680 580" fill="none">', '<defs>'];
       for (var i = 0; i < 3; i++) s.push('<clipPath id="scr' + i + '"><rect x="' + (i * 240) + '" y="66" width="200" height="433" rx="19"/></clipPath>');
       s.push('</defs>');
@@ -600,30 +670,45 @@
         s.push('<text x="' + x + '" y="542" font-family="SF Pro Text, Inter, sans-serif" font-size="11" fill="#1C1C1E">' + esc(r.notes[i][1]) + '</text>');
       }
       s.push('</svg>');
-      cb(s.join(''));
+      return s.join('');
     });
   }
 
   ctafig && ctafig.addEventListener('click', function (e) {
     if (coarse) {
       e.preventDefault();
-      location.href = 'mailto:?subject=' + encodeURIComponent('flow breakdown \u2014 for your mac') +
-        '&body=' + encodeURIComponent('open this on your mac: ' + location.origin + location.pathname);
+      document.querySelector('[data-email-link]').click();
       return;
     }
-    if (!navigator.clipboard || !navigator.clipboard.writeText) return;   // anchor falls back to #download
     e.preventDefault();
-    teardownSVG(function (svg) {
-      var done = function () {
-        if (ctaLabel) {
-          ctaLabel.textContent = 'copied \u00B7 now \u2318V in figma';
-          setTimeout(function () { ctaLabel.textContent = 'copy to figma'; }, 2600);
-        }
-      };
-      var fail = function () { location.href = '#download'; };
-      try {                                   // writeText can throw synchronously
-        navigator.clipboard.writeText(svg).then(done, fail);
-      } catch (err) { fail(); }
+    if (copyPending) return;
+    if (!navigator.clipboard || !navigator.clipboard.writeText) {
+      copyFailure = 'clipboard access isn’t available in this browser.';
+      render(progress);
+      return;
+    }
+    var attempt = ++copyAttempt, recording = current;
+    copyPending = true;
+    copyFailure = '';
+    render(progress);
+    teardownSVG().then(function (svg) {
+      if (attempt !== copyAttempt || recording !== current) return;
+      // Promise chaining handles both a synchronous throw and a rejected write.
+      return navigator.clipboard.writeText(svg).then(function () {
+        if (attempt !== copyAttempt || recording !== current) return;
+        var hadFocus = document.activeElement === ctafig;
+        copiedRecording = recording;
+        copyPending = false;
+        var shortcut = /Mac|iPhone|iPad|iPod/.test(navigator.platform) ? '⌘V' : 'Ctrl+V';
+        copyConfirmation.textContent = 'copied. open Figma and paste with ' + shortcut + '.';
+        render(progress);
+        if (hadFocus && !postCopy.hidden) yourTurn.focus({ preventScroll: true });
+      });
+    }).catch(function () {
+      if (attempt !== copyAttempt) return;
+      copyPending = false;
+      copyFailure = 'couldn’t copy. try again with this page in focus.';
+      render(progress);
     });
   });
 

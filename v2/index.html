@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Flow Breakdown — record a flow, get a Figma-ready teardown</title>
-<meta name="description" content="A Mac app that turns a screen recording into every distinct screen, laid out with what you said about each one. Free at launch.">
+<title>Flow Breakdown — screen recording in. figma teardown out.</title>
+<meta name="description" content="Turn screen recordings into screens you can study, annotate, and share with your team in Figma. Talk while recording to add transcribed notes and an emotion map. A Mac app, free at launch.">
 <meta name="theme-color" content="#F2F2F5">
 <link rel="icon" href="assets/icon.png">
 <link rel="stylesheet" href="styles.css">
@@ -16,13 +16,15 @@
   <nav class="menus">
     <img class="mark" src="assets/icon.png" alt="" width="15" height="15">
     <span class="app">Flow Breakdown</span>
-    <a href="#how">how it works</a>
+    <a href="#zone">how it works</a>
     <a href="#get">what you get</a>
     <a href="https://bencodev.github.io/flow-breakdown-site/">support</a>
   </nav>
   <div class="status">
     <span class="req">free · macOS 26+</span>
-    <a class="getbtn" href="#download">get flow breakdown</a>
+    <a class="store-badge" href="#download" data-download data-store-badge aria-label="Download Flow Breakdown on the Mac App Store">
+      <img src="assets/mac-app-store.svg" alt="Download on the Mac App Store" width="156" height="40">
+    </a>
   </div>
 </header>
 
@@ -30,7 +32,8 @@
 
   <section class="hero">
     <div class="promise">
-      <h1>record a flow.<br>get a <em>figma-ready teardown.</em></h1>
+      <h1>screen recording in. figma teardown out.</h1>
+      <p class="hero-intro">that onboarding you just tried.<br>that interaction you want to show your team.</p>
     </div>
 
     <!-- Scroll zone: on desktop the extract pins and scroll scrubs it.
@@ -83,19 +86,13 @@
           </div>
 
           <figure class="whose">
-            <img src="assets/jose.jpg" alt="Jose, who makes the App Breakdown show" width="200" height="200">
             <figcaption>
-              <b>a roll like jose’s. 148 recordings, dying in his photo roll.</b>
-              <a href="https://www.youtube.com/@appbreakdownshow" rel="noopener">app breakdown ↗</a>
+              <b>a flow worth keeping.</b>
+              <a href="https://www.youtube.com/@appbreakdownshow" rel="noopener">inspired by app breakdown ↗</a>
             </figcaption>
           </figure>
 
-          <button class="btn" id="breakdown" type="button">break it down
-            <svg class="caret" viewBox="0 0 12 14" aria-hidden="true">
-              <path d="M2 2.5l4 4 4-4"/>
-              <path d="M2 8l4 4 4-4"/>
-            </svg>
-          </button>
+          <button class="narrative-link" id="breakdown" type="button">let’s take a closer look <span aria-hidden="true">↓</span></button>
         </div>
       </div>
     </div>
@@ -167,12 +164,21 @@
         <div class="marquee" id="marquee" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 
         <div class="storyfoot">
-          <p class="cap scap" data-beat="0">one click later.</p>
-          <p class="cap scap" data-beat="1">you talked while you tapped. every word, pinned to its screen.</p>
-          <p class="cap scap" data-beat="2">and how it felt, screen by screen.</p>
-          <p class="cap scap" data-beat="3">modify, annotate — it’s an open canvas.</p>
-          <p class="cap scap" data-beat="4">show your team what you found.</p>
-          <a class="btn ctafig" id="ctafig" href="#download"><span id="ctalabel">copy to figma</span></a>
+          <p class="cap scap" data-beat="0">the key screens, pulled out for you.</p>
+          <p class="cap scap" data-beat="1">what you said, next to the screen you said it about.</p>
+          <p class="cap scap" data-beat="2">your reactions, mapped across the flow.</p>
+          <p class="cap scap" data-beat="3">move things around. circle something. leave a thought.</p>
+          <p class="cap scap" data-beat="4">now you’ve got something to talk through together.</p>
+          <button class="narrative-link story-next" id="story-next" type="button" hidden><span id="story-next-label">talked while recording?</span><span aria-hidden="true">↓</span></button>
+          <a class="btn ctafig" id="ctafig" href="#download"><span id="ctalabel">copy this example to Figma</span></a>
+          <p class="cap copy-feedback" id="copy-feedback" role="status" hidden></p>
+          <section class="post-copy" id="post-copy" aria-labelledby="your-turn" hidden>
+            <p class="copy-confirmation" id="copy-confirmation" role="status"></p>
+            <h2 id="your-turn" tabindex="-1">now your turn.</h2>
+            <p class="your-recording">try it with your own recording.</p>
+            <a class="btn download-cta" href="#download" data-download>get it on the Mac App Store</a>
+            <a class="narrative-link" href="#get">a few practical details <span aria-hidden="true">↓</span></a>
+          </section>
           <div class="mates" aria-hidden="true">
             <span class="mate m1"><span class="p"><svg viewBox="0 0 14 16"><path d="M1 1l4.2 13 2.1-5.6L13 6.3Z"/></svg><i>mia</i></span></span>
             <span class="mate m2"><span class="p"><svg viewBox="0 0 14 16"><path d="M1 1l4.2 13 2.1-5.6L13 6.3Z"/></svg><i>sam</i></span></span>
@@ -183,23 +189,13 @@
     </div>
   </section>
 
-  <section class="band" id="how">
-    <h2>three steps, then it’s a board.</h2>
-    <p class="lede">no scrubbing. no screenshotting. no cropping.</p>
-    <ol class="steps">
-      <li><span class="n">01</span><h3>drop a recording</h3><p>any app, any flow. the .mov already in your photos works.</p></li>
-      <li><span class="n">02</span><h3>break it down</h3><p>every distinct screen, found for you. six useful screens instead of a minute of video.</p></li>
-      <li><span class="n">03</span><h3>copy to figma</h3><p>screens and notes land as layers, ready for the review.</p></li>
-    </ol>
-  </section>
-
   <section class="band" id="get">
     <h2>the practical bits.</h2>
     <dl class="details">
-      <div><dt>runs on your mac</dt><dd>Scanning, transcription, key points and tap detection all happen on-device. Your recordings never leave your machine.</dd></div>
-      <div><dt>built for macOS 26</dt><dd>A native app, not a wrapper. Glass toolbars, drag and drop, keyboard shortcuts, ⌘K.</dd></div>
-      <div><dt>copy to figma</dt><dd>Every screen and note arrives as its own layer, so you can move and mark them up like anything else on the canvas.</dd></div>
-      <div><dt>voice is a bonus</dt><dd>Silent recordings work exactly the same. Say things when you have them — never the price of entry.</dd></div>
+      <div><dt>runs on your mac</dt><dd>Screen extraction and voice analysis happen on your Mac.</dd></div>
+      <div><dt>macOS 26 or later</dt><dd>A Mac app for turning recordings from any app into a board.</dd></div>
+      <div><dt>ready for Figma</dt><dd>Screens arrive as image layers, with notes you can edit alongside them.</dd></div>
+      <div><dt>voice is optional</dt><dd>No voiceover needed. Silent recordings still become a board.</dd></div>
       <div><dt>free at launch</dt><dd>Version 1.0 is free, with no in-app purchase.</dd></div>
     </dl>
   </section>
@@ -207,9 +203,9 @@
   <section class="band close" id="download">
     <div class="cta">
       <img src="assets/icon.png" alt="" width="64" height="64">
-      <h2>found a flow worth studying?</h2>
-      <p class="lede">give it a place on your canvas.</p>
-      <a class="btn" href="#download">download for mac</a>
+      <h2>next time, don’t leave it<br>in your camera roll.</h2>
+      <a class="btn download-cta" href="#download" data-download>get it on the Mac App Store</a>
+      <button class="email-link" type="button" data-email-link>send a link to my mac</button>
       <p class="fine">free at launch · macOS 26+</p>
     </div>
     <figure class="makernote">
@@ -228,6 +224,25 @@
   </nav>
 </footer>
 
+<dialog class="download-dialog" id="download-dialog" aria-labelledby="download-title" aria-describedby="download-description">
+  <div class="download-bar">
+    <span>get flow breakdown</span>
+    <button type="button" class="download-close" aria-label="Close download dialog" autofocus>×</button>
+  </div>
+  <div class="download-body">
+    <img src="assets/icon.png" alt="" width="48" height="48">
+    <h2 id="download-title">a little reminder for your mac.</h2>
+    <p id="download-description">Flow Breakdown is a Mac app. Email yourself a link to open when you’re back at your desk.</p>
+    <form id="download-email-form">
+      <label for="download-email">your email</label>
+      <input id="download-email" name="email" type="email" placeholder="you@example.com" autocomplete="email" autocapitalize="off" spellcheck="false" required>
+      <button class="btn" type="submit" id="download-send">open email draft</button>
+      <p class="download-help" id="download-help">Opens your email app with the link ready to send to yourself.</p>
+    </form>
+    <p class="download-feedback" id="download-feedback" role="status" aria-live="polite"></p>
+  </div>
+</dialog>
+<script src="download.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
