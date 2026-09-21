@@ -1,41 +1,257 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Flow Breakdown — Support</title>
-  <meta name="description" content="Support for Flow Breakdown for Mac: turn a screen recording into a Figma-ready teardown.">
-  <link rel="icon" href="icon.png">
-  <link rel="stylesheet" href="style.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flow Breakdown — screen recording in. Figma teardown out.</title>
+<meta name="description" content="Turn screen recordings into screens you can study, annotate, and share with your team in Figma. Talk while recording to add transcribed notes and an emotion map. A Mac app, free at launch.">
+<meta name="theme-color" content="#F2F2F5">
+<link rel="icon" href="assets/icon.png">
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<main>
-  <header>
-    <img src="icon.png" alt="">
-    <div>
-      <h1>Flow Breakdown</h1>
-      <p class="sub">Record a flow, get a teardown. For Mac.</p>
-    </div>
-  </header>
 
-  <div class="card">
-    <p><strong>Need help?</strong> Email <a href="mailto:benoitjosephcotte@gmail.com?subject=Flow%20Breakdown">benoitjosephcotte@gmail.com</a>. You'll get an answer from the person who makes the app, usually within two working days.</p>
-    <p>For a bug, say what you did and what you expected. A short screen recording helps.</p>
+<!-- The site nav as a Mac menu bar: honest, because it is a Mac app. -->
+<header class="menubar">
+  <nav class="menus">
+    <img class="mark" src="assets/icon.png" alt="" width="15" height="15">
+    <span class="app">Flow Breakdown</span>
+    <a href="#zone">How it works</a>
+    <a href="#get">What you get</a>
+    <a href="https://bencodev.github.io/flow-breakdown-site/support.html">Support</a>
+  </nav>
+  <div class="status">
+    <span class="req">free · macOS 26+</span>
+    <a class="store-button" href="#download" data-download data-store-link aria-label="Mac App Store — download Flow Breakdown">
+      <img class="store-icon" src="assets/app-store-icon.png" alt="" width="32" height="32">
+      <span>Mac App Store</span>
+    </a>
   </div>
+</header>
 
-  <h2>What it does</h2>
-  <p>Drop a screen recording of any app. Flow Breakdown finds every distinct screen, puts what you said under each one, and lays them out on a board you can mark up and paste into Figma as layers.</p>
+<main>
 
-  <h2>Questions</h2>
-  <p><strong>What do I need?</strong> A Mac with macOS 26. Key points and feeling suggestions also need Apple Intelligence turned on (System Settings ▸ Apple Intelligence &amp; Siri).</p>
-  <p><strong>Where are my breakdowns?</strong> In the folder you chose the first time you saved one, usually Documents ▸ Flow Breakdown. Each is a .flowbreakdown document. File ▸ Breakdowns Folder… changes the folder.</p>
-  <p><strong>My voice notes are empty.</strong> The recording needs sound. On iPhone, long-press the Screen Recording button in Control Center and turn Microphone on before you record.</p>
-  <p><strong>It found too many or too few screens.</strong> Click the screen count under the title and pick another cut. Screens you've marked up on the canvas are kept.</p>
-  <p><strong>How do I get it into Figma?</strong> Copy to Figma, then paste in Figma with ⌘V. Every screen arrives as its own layer, with your notes.</p>
+  <section class="hero">
+    <div class="promise">
+      <h1>screen recording in. Figma teardown out.</h1>
+      <p class="hero-intro">that onboarding you just tried.<br>that interaction you want to show your team.</p>
+    </div>
 
-  <footer>
-    <a href="privacy.html">Privacy policy</a> · © 2026 Ben Cotte
-  </footer>
+    <!-- Scroll zone: on desktop the extract pins and scroll scrubs it.
+         On small screens this collapses to normal flow and plays once. -->
+    <div class="zone" id="zone">
+      <div class="pin" id="pin">
+        <div class="extract" id="extract">
+
+          <!-- The app's own onboarding bevel: EmptyStateView.bevel —
+               an oversized phone bevel cropped by the window. -->
+          <div class="bevel" id="phone">
+            <i class="island" aria-hidden="true"></i>
+            <div class="library">
+              <div class="libhdr">
+                <div>
+                  <b>Screen recordings</b>
+                  <span>148 items · 1 selected</span>
+                </div>
+              </div>
+              <div class="roll" id="roll">
+                <button class="cell pick" type="button" data-pick="0"
+                        aria-pressed="true"
+                        aria-label="Use the RunBuds recording">
+                  <img src="assets/th_rb1.jpg" alt="" width="200" height="200">
+                  <b>0:21</b>
+                  <i class="mark" aria-hidden="true"></i>
+                </button>
+                <button class="cell pick" type="button" data-pick="1"
+                        aria-pressed="false"
+                        aria-label="Use the The Outsiders recording">
+                  <img src="assets/th_outsiders.jpg" alt="" width="200" height="200">
+                  <b>1:14</b>
+                  <i class="mark" aria-hidden="true"></i>
+                </button>
+                <button class="cell pick" type="button" data-pick="2"
+                        aria-pressed="false"
+                        aria-label="Use the Oura recording">
+                  <img src="assets/th_oura.jpg" alt="" width="200" height="200">
+                  <b>0:38</b>
+                  <i class="mark" aria-hidden="true"></i>
+                </button>
+                <figure class="cell"><img src="assets/th_monzo.jpg" alt="" width="200" height="200"><b>0:52</b></figure>
+                <figure class="cell"><img src="assets/th_fotmob.jpg" alt="" width="200" height="200"><b>2:06</b></figure>
+                <figure class="cell"><img src="assets/th_liven.jpg" alt="" width="200" height="200"><b>0:19</b></figure>
+                <figure class="cell"><img src="assets/th_tolan.jpg" alt="" width="200" height="200"><b>1:27</b></figure>
+                <figure class="cell"><img src="assets/th_alan.jpg" alt="" width="200" height="200"><b>0:44</b></figure>
+                <figure class="cell"><img src="assets/th_rodeo.jpg" alt="" width="200" height="200"><b>0:33</b></figure>
+              </div>
+            </div>
+          </div>
+
+          <figure class="whose">
+            <figcaption>
+              <b>a roll like Jose’s.</b>
+              <a href="https://www.youtube.com/@appbreakdownshow" rel="noopener">inspired by App Breakdown ↗</a>
+            </figcaption>
+          </figure>
+
+          <button class="narrative-link" id="breakdown" type="button"><span class="narrative-label">Let’s take a closer look</span><span class="narrative-arrow" aria-hidden="true">↓</span></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- The story: the stage pins while scroll drives the beats — voice, feelings,
+         canvas, copy-to-figma. Every overlay is opacity:0 in CSS, so the no-JS
+         page (and reduced motion) is simply the clean finished board. -->
+    <div class="storyzone" id="storyzone">
+      <div class="stage" id="stage">
+        <div class="glass" id="glass" aria-hidden="true"></div>
+
+        <!-- The end state, in HTML. JS rewinds it to the phone and plays forward. -->
+        <div class="board" id="board">
+            <svg class="lane" id="lane" aria-hidden="true"><path id="lanePath"></path></svg>
+            <p class="waiting" id="waiting" aria-hidden="true">Your screens land here.</p>
+            <ol class="flow" id="flow">
+              <li class="slot">
+                <span class="chip kept" style="--offset:0"><svg class="face" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="#34C759" fill-opacity="0.16"/><path d="M6 11.2L14 11.2Q14 15.6 10 15.6Q6 15.6 6 11.2Z" fill="var(--delighted)"/><path d="M5.2 8.8Q6.7 6.6 8.2 8.8M11.8 8.8Q13.3 6.6 14.8 8.8" fill="none" stroke="var(--delighted)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>Delighted</span>
+                <span class="label">Screen 1</span>
+                <div class="cardbox">
+                  <div class="ghost" aria-hidden="true"></div>
+                  <div class="card" data-rot="-6.2" data-dx="-9" data-dy="5">
+                    <img src="assets/card1.jpg" srcset="assets/card1.jpg 1x, assets/card1@2x.jpg 2x" alt="First screen of the recorded flow" width="400" height="866">
+                  </div>
+                </div>
+                <p class="note"><b>Voice · 0:12</b><span>“Oh, nice. That’s pretty cool.”</span></p>
+              </li>
+              <li class="slot">
+                <span class="chip sug" style="--offset:12"><svg class="face" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="#FFCC00" fill-opacity="0.16"/><ellipse cx="7.6" cy="9.2" rx="1.1" ry="1.35" fill="var(--confused)"/><ellipse cx="12.4" cy="9.2" rx="1.1" ry="1.35" fill="var(--confused)"/><path d="M11.2 6.1L14.6 5.1M6.6 14Q8.4 12.4 10 13.4Q11.6 14.4 13.4 12.8" fill="none" stroke="var(--confused)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>Confused</span>
+                <span class="label">Screen 2</span>
+                <div class="cardbox">
+                  <div class="ghost" aria-hidden="true"></div>
+                  <div class="card" data-rot="5.1" data-dx="7" data-dy="-6">
+                    <img src="assets/card2.jpg" srcset="assets/card2.jpg 1x, assets/card2@2x.jpg 2x" alt="Second screen of the recorded flow" width="400" height="866">
+                  </div>
+                </div>
+                <p class="note"><b>Voice · 0:38</b><span>“I’m not sure what this is about.”</span></p>
+              </li>
+              <li class="slot">
+                <span class="chip kept" style="--offset:8"><svg class="face" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="10" fill="#AEAEB2" fill-opacity="0.16"/><ellipse cx="7.6" cy="8.8" rx="1.1" ry="1.35" fill="var(--meh)"/><ellipse cx="12.4" cy="8.8" rx="1.1" ry="1.35" fill="var(--meh)"/><path d="M6.8 13.4L13.2 13.4" fill="none" stroke="var(--meh)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>Meh</span>
+                <span class="label">Screen 3</span>
+                <div class="cardbox">
+                  <div class="ghost" aria-hidden="true"></div>
+                  <div class="card" data-rot="-2.8" data-dx="2" data-dy="8">
+                    <img src="assets/card3.jpg" srcset="assets/card3.jpg 1x, assets/card3@2x.jpg 2x" alt="Third screen of the recorded flow" width="400" height="866">
+                  </div>
+                </div>
+                <p class="note"><b>Voice · 0:17</b><span>“Okay, last step.”</span></p>
+              </li>
+            </ol>
+          </div>
+
+        <!-- beat 2 · voice -->
+        <div class="focus" id="focus" aria-hidden="true">
+          <b id="focusTime">Voice · 0:38</b>
+          <q id="focusQuote">I’m not sure what this is about.</q>
+          <svg class="wave" viewBox="0 0 216 32" aria-hidden="true"></svg>
+        </div>
+
+        <!-- beat 4 · annotations -->
+        <i class="ring" id="ring" aria-hidden="true"></i>
+        <svg class="arrow" id="arrow" viewBox="0 0 130 90" aria-hidden="true">
+          <path d="M118 8 C 92 30, 50 34, 18 62 M30 52 L14 66 L34 70"
+                fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="scribble" id="scribble" aria-hidden="true">second confirm?</span>
+
+        <!-- beat 5 · everything selected -->
+        <div class="marquee" id="marquee" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+
+        <div class="storyfoot">
+          <p class="cap scap" data-beat="0">the key screens, pulled out for you.</p>
+          <p class="cap scap" data-beat="1">what you said, next to the screen you said it about.</p>
+          <p class="cap scap" data-beat="2">your reactions, mapped across the flow.</p>
+          <p class="cap scap" data-beat="3">move things around. circle something. leave a thought.</p>
+          <p class="cap scap" data-beat="4">now you’ve got something to talk through together.</p>
+          <button class="narrative-link story-next" id="story-next" type="button" hidden><span class="narrative-label" id="story-next-label">Talked while recording?</span><span class="narrative-arrow" aria-hidden="true">↓</span></button>
+          <a class="store-button ctafig" id="ctafig" href="#download"><img class="store-icon" src="assets/figma-icon.png" alt="" width="34" height="34"><span id="ctalabel">Copy this example to Figma</span></a>
+          <p class="cap copy-feedback" id="copy-feedback" role="status" hidden></p>
+          <section class="post-copy" id="post-copy" aria-labelledby="your-turn" hidden>
+            <p class="copy-confirmation" id="copy-confirmation" role="status"></p>
+            <h2 id="your-turn" tabindex="-1">now your turn.</h2>
+            <p class="your-recording">try it with your own recording.</p>
+            <a class="store-button download-cta" href="#download" data-download aria-label="Download for Mac — get Flow Breakdown on the Mac App Store">
+              <img class="store-icon" src="assets/app-store-icon.png" alt="" width="30" height="30">
+              <span data-download-label>Download for Mac</span>
+            </a>
+          </section>
+          <div class="mates" aria-hidden="true">
+            <span class="mate m1"><span class="p"><svg viewBox="0 0 14 16"><path d="M1 1l4.2 13 2.1-5.6L13 6.3Z"/></svg><i>Mia</i></span></span>
+            <span class="mate m2"><span class="p"><svg viewBox="0 0 14 16"><path d="M1 1l4.2 13 2.1-5.6L13 6.3Z"/></svg><i>Sam</i></span></span>
+            <span class="mate m3"><span class="p"><svg viewBox="0 0 14 16"><path d="M1 1l4.2 13 2.1-5.6L13 6.3Z"/></svg><i>Leo</i></span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="get">
+    <h2>the practical bits.</h2>
+    <dl class="details">
+      <div><dt>runs on your Mac</dt><dd>Screen extraction and voice analysis happen on your Mac.</dd></div>
+      <div><dt>macOS 26 or later</dt><dd>Key points and feeling suggestions need Apple Intelligence turned on.</dd></div>
+      <div><dt>ready for Figma</dt><dd>Screens arrive as image layers, with notes you can edit alongside them.</dd></div>
+      <div><dt>voice is optional</dt><dd>No voiceover needed. Silent recordings still become a board.</dd></div>
+      <div><dt>free at launch</dt><dd>Version 1.0 is free, with no in-app purchase.</dd></div>
+    </dl>
+  </section>
+
+  <section class="band close" id="download">
+    <div class="cta">
+      <img src="assets/icon.png" alt="" width="64" height="64">
+      <h2>next time, don’t leave it<br>in your camera roll.</h2>
+      <div class="store-download">
+        <a class="store-button download-cta" href="#download" data-download aria-label="Download for Mac — get Flow Breakdown on the Mac App Store">
+          <img class="store-icon" src="assets/app-store-icon.png" alt="" width="34" height="34">
+          <span data-download-label>Download for Mac</span>
+        </a>
+        <p class="store-note">Mac App Store · macOS 26+</p>
+      </div>
+      <button class="email-link" type="button" data-email-link>Send a link to my Mac</button>
+      <p class="fine">free at launch</p>
+    </div>
+    <figure class="makernote">
+      <blockquote>“I kept screen-recording apps and never doing anything with the recordings. This is the missing step.”</blockquote>
+      <figcaption>Ben Cotte, maker of Flow Breakdown</figcaption>
+    </figure>
+  </section>
+
 </main>
+
+<footer>
+  <span>© 2026 · Made by Ben Cotte</span>
+  <nav>
+    <a href="https://bencodev.github.io/flow-breakdown-site/support.html">Support ↗</a>
+    <a href="https://bencodev.github.io/flow-breakdown-site/privacy.html">Privacy ↗</a>
+  </nav>
+</footer>
+
+<dialog class="download-dialog" id="download-dialog" aria-labelledby="download-title" aria-describedby="download-description">
+  <div class="download-bar">
+    <span>Get Flow Breakdown</span>
+    <button type="button" class="download-close" aria-label="Close download dialog" autofocus>×</button>
+  </div>
+  <div class="download-body">
+    <img src="assets/icon.png" alt="" width="48" height="48">
+    <h2 id="download-title">A little reminder for your Mac.</h2>
+    <p id="download-description">Flow Breakdown is a Mac app. Email yourself a link to open when you’re back at your desk.</p>
+    <form id="download-email-form">
+      <label for="download-email">Your email</label>
+      <input id="download-email" name="email" type="email" placeholder="you@example.com" autocomplete="email" autocapitalize="off" spellcheck="false" required>
+      <button class="btn" type="submit" id="download-send">Open email draft</button>
+      <p class="download-help" id="download-help">Opens your email app with the link ready to send to yourself.</p>
+    </form>
+    <p class="download-feedback" id="download-feedback" role="status" aria-live="polite"></p>
+  </div>
+</dialog>
+<script src="download.js"></script>
+<script src="app.js"></script>
 </body>
 </html>

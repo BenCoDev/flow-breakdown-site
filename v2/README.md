@@ -1,15 +1,18 @@
 # Landing page — v2
 
-A standalone static landing page. No build step, no dependencies: three files and a folder
-of images. Built to drop into the Pages repo at a **`/v2` path** so it sits alongside the existing
-support and privacy pages rather than replacing the index, which the App Store listing points at.
+A standalone static landing page. No build step or dependencies. The source stays in
+`site/v2/`; the current version is published at the main GitHub Pages URL, with `/v2/`
+kept as a matching preview. The former home page is preserved at `support.html`, and
+`privacy.html` remains available at its existing URL.
 
 ```
 python3 -m http.server 8777    # then open http://localhost:8777/
 ```
 
-Deploy by copying this folder into `BenCoDev/flow-breakdown-site` as `v2/`, giving
-`https://bencodev.github.io/flow-breakdown-site/v2/`.
+Deploy `index.html`, `styles.css`, `app.js`, `download.js`, and `assets/` to the root of
+`BenCoDev/flow-breakdown-site`, and keep its `v2/` copy in sync. The main landing page is
+`https://bencodev.github.io/flow-breakdown-site/`. Preserve `support.html`, `privacy.html`,
+`style.css`, and `icon.png`, which serve the existing help and privacy content.
 
 ## The design
 
@@ -38,7 +41,7 @@ and optionally `EMAIL_ENDPOINT` to a transactional email service endpoint. No re
 was published in the app repository when this was implemented. Until configured, the
 desktop CTA explains that the link is unavailable and offers a reminder. Email currently
 opens a prefilled draft addressed to the visitor; it does not claim an email was sent.
-Drafts link to the public v2 page, never localhost.
+Drafts link to the main public landing page, never localhost.
 
 An email endpoint must accept `{ email }`, validate and rate-limit server-side, send the
 configured download link, and return `{ delivered: true }` only on accepted delivery.
@@ -57,12 +60,13 @@ borrowed.
 **screen recording in. Figma teardown out.**, supported by “that onboarding you just tried.
 that interaction you want to show your team.” The bevel and quiet **Let’s take a closer look**
 action lead into the demo. Download remains in the menu bar; there is no app icon or download
-button in the hero. The aside now says **a flow worth keeping.**, with a quieter App Breakdown
+button in the hero. The aside restores **a roll like Jose’s.**, with a quieter App Breakdown
 inspiration credit and no portrait or claim that the library belongs to Jose.
 
 The redundant **three steps, then it’s a board** band is removed. The menu's **How it works**
 link now points to `#zone`; the demo leads directly to practical questions about local processing,
-macOS 26 or later, Figma layers, optional voice, and price. Silent recordings still become a board;
+macOS 26 or later, Figma layers, optional voice, and price. The requirements row also explains
+that key points and feeling suggestions need Apple Intelligence turned on. Silent recordings still become a board;
 voice analysis maps the visitor's own reactions rather than claiming to judge the interface.
 
 **Current CTA shapes · 21 September 2026.** Download and example-copy actions share a custom gray `.store-button`
