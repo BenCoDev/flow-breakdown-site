@@ -95,7 +95,7 @@
   var copyAttempt = 0;
   var copyFailure = '';
   var storyStops = [0.26, 0.58, 0.86, 0.98];
-  var storyInvitations = ['talked while recording?', 'and how did it feel?', 'add your own take', 'show your team'];
+  var storyInvitations = ['Talked while recording?', 'And how did it feel?', 'Add your own take', 'Show your team'];
   var nextBeat = 0;
   if (!extract || !board || !picks.length) return;
 
@@ -484,7 +484,7 @@
       ctafig.style.visibility = G > 0.5 && !showPostCopy ? 'visible' : 'hidden';
       ctafig.setAttribute('aria-busy', String(copyPending));
       ctafig.setAttribute('aria-disabled', String(copyPending));
-      if (ctaLabel) ctaLabel.textContent = copyPending ? 'copying…' : coarse ? 'send it to your mac' : 'copy this example to Figma';
+      if (ctaLabel) ctaLabel.textContent = copyPending ? 'Copying…' : coarse ? 'Send it to your Mac' : 'Copy this example to Figma';
     }
     if (stage) stage.classList.toggle('canvasmode', C > 0.5);
 
@@ -625,7 +625,7 @@
   var CHIP_OFF = [0, 12, 8];
   var coarse = matchMedia('(pointer: coarse)').matches;
   var ctaLabel = document.getElementById('ctalabel');
-  if (coarse && ctaLabel) ctaLabel.textContent = 'send it to your mac';
+  if (coarse && ctaLabel) ctaLabel.textContent = 'Send it to your Mac';
 
   function imgData(im) {
     return new Promise(function (res, reject) {

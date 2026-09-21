@@ -26,7 +26,7 @@
           ? 'Send yourself a Mac App Store link'
           : 'Download Flow Breakdown on the Mac App Store');
       } else {
-        link.textContent = mobile.matches ? 'send it to me' : 'get it on the Mac App Store';
+        link.textContent = mobile.matches ? 'Send it to me' : 'Get it on the Mac App Store';
       }
       link.href = DOWNLOAD_URL || '#download';
     });
@@ -37,11 +37,11 @@
     form.reset();
     form.hidden = false;
     feedback.textContent = '';
-    title.textContent = unavailable ? 'the download link is coming.' : 'a little reminder for your mac.';
+    title.textContent = unavailable ? 'the download link is coming.' : 'a little reminder for your Mac.';
     description.textContent = unavailable
       ? 'The download isn’t available on this page yet. Send yourself the page to come back later.'
       : 'Flow Breakdown is a Mac app. Email yourself a link to open when you’re back at your desk.';
-    send.textContent = EMAIL_ENDPOINT ? 'send me the link' : 'open email draft';
+    send.textContent = EMAIL_ENDPOINT ? 'Send me the link' : 'Open email draft';
     send.disabled = false;
     document.getElementById('download-help').textContent = EMAIL_ENDPOINT
       ? 'One email with the link. No newsletter.'
@@ -90,7 +90,7 @@
     request = controller;
     const timeout = setTimeout(function () { controller.abort(); }, 15000);
     send.disabled = true;
-    send.textContent = 'sending…';
+    send.textContent = 'Sending…';
     try {
       const response = await fetch(EMAIL_ENDPOINT, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -108,7 +108,7 @@
       clearTimeout(timeout);
       if (request === controller) {
         send.disabled = false;
-        send.textContent = 'send me the link';
+        send.textContent = 'Send me the link';
         request = null;
       }
     }
