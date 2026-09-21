@@ -195,7 +195,9 @@ h1{font-size:clamp(32px,4.4vw,52px);line-height:1.08;letter-spacing:-.032em;font
 .scap[data-beat="0"]{opacity:1}                 /* no-JS: the plain caption */
 .story-next{position:absolute;left:50%;top:80px;translate:-50% 0;white-space:nowrap}
 .ctafig{position:absolute;left:50%;top:80px;translate:-50% 0;
-  opacity:0;visibility:hidden;pointer-events:none;font-size:15px;padding:11px 22px}
+  opacity:0;visibility:hidden;pointer-events:none;font-size:15px;
+  min-width:264px;max-width:100%;min-height:48px;padding:6px 18px 6px 12px}
+.ctafig .store-icon{width:34px;height:34px}
 .ctafig[aria-busy="true"]{cursor:progress}
 .copy-feedback{position:absolute;top:46px;left:50%;translate:-50% 0;width:min(52ch,100%)}
 .post-copy{position:absolute;top:46px;left:50%;translate:-50% 0;width:min(440px,100%);

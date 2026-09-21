@@ -65,14 +65,18 @@ link now points to `#zone`; the demo leads directly to practical questions about
 macOS 26 or later, Figma layers, optional voice, and price. Silent recordings still become a board;
 voice analysis maps the visitor's own reactions rather than claiming to judge the interface.
 
-**Current CTA shapes · 21 September 2026.** Download actions use a custom gray `.store-button`
+**Current CTA shapes · 21 September 2026.** Download and example-copy actions share a custom gray `.store-button`
 with a 12px radius and the blue App Store icon. The header button is 44px high with a 32px icon
 and the label **Mac App Store**. The closing **Download for Mac** button is 48px high with a
 34px icon; **Mac App Store · macOS 26+** sits underneath, with **free at launch** on its own line.
 After copying, the button keeps a 44px height and 30px icon so the reserved footer still fits.
-The example-copy action stays blue with its existing 10px radius.
+**Copy this example to Figma** now uses the same gray fill, subtle border, and 12px radius,
+with a 34px Figma icon. Its button is at least 48px high, with 15px text and padding of
+6px top/bottom, 18px right, and 12px left. A 264px minimum width prevents the button collapsing
+when its label changes to **Copying…**.
 
-The gray fill mixes 10% ink into the surface, adapts to the theme, and has a subtle border.
+The gray fill mixes 10% ink into the surface and adapts to the theme, with a subtle ink border
+(12% in light mode, 14% in dark mode).
 Hover raises the mix to 15%; active uses 18%. Keyboard focus remains visible, and transitions
 only run when reduced motion is not requested. `download.js` updates only the
 `[data-download-label]` span, preserving each icon and the header's fixed label. Accessible labels
@@ -80,6 +84,8 @@ describe the store destination on desktop and the email handoff on mobile.
 
 `assets/app-store-icon.png` is an unmodified 256px PNG extracted from the installed
 `/System/Applications/App Store.app/Contents/Resources/AppIcon.icns` using `sips` conversion.
+`assets/figma-icon.png` is an unmodified 256px bitmap extracted with `iconutil` from the installed
+`/Applications/Figma.app/Contents/Resources/electron.icns`.
 This custom control is not an official Apple download badge. The earlier unmodified
 [Mac App Store SVG badge](https://developer.apple.com/app-store/marketing/guidelines/images/badge-download-on-the-mac-app-store.svg)
 remains in `assets/mac-app-store.svg` as an unused history asset; it is no longer shown.
@@ -272,6 +278,8 @@ to retry. A recording switch invalidates any pending attempt. Caveats: Figma sub
 font unless the paster has SF Pro; the SVG mirrors the board's geometry (680×580), not the app's
 exact export. On **coarse pointers** the button reads "Send it to your Mac" and opens the existing
 email reminder dialog. Its submit action opens a prefilled draft; it does not send mail.
+The gray button and Figma icon are a visual change only: clipboard writes, pending/error/success
+handling, and mobile email routing retain the same behavior.
 
 **Hovering the CTA summons the team.** Three Figma-multiplayer-style cursors (mia, sam, leo —
 purple/green/coral) fade in around the button and idle with slow drifts, waiting for the paste.
