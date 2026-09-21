@@ -7,7 +7,7 @@
 <meta name="description" content="Turn screen recordings into screens you can study, annotate, and share with your team in Figma. Talk while recording to add transcribed notes and an emotion map. A Mac app, free at launch.">
 <meta name="theme-color" content="#F2F2F5">
 <link rel="icon" href="assets/icon.png">
-<link rel="stylesheet" href="styles.css?v=af6f2ca36d48">
+<link rel="stylesheet" href="styles.css?v=a5f3ded024ec">
 </head>
 <body>
 
@@ -32,68 +32,63 @@
 <main>
 
   <section class="hero">
-    <div class="promise">
-      <h1>screen recording in. Figma teardown out.</h1>
-      <p class="hero-intro">that onboarding you just tried.<br>that interaction you want to show your team.</p>
-    </div>
+    <div class="hero-opening">
+      <div class="promise">
+        <h1>screen recording in. Figma teardown out.</h1>
+        <p class="hero-intro">that onboarding you just tried.<br>that interaction you want to show your team.</p>
+      </div>
 
-    <!-- Scroll zone: on desktop the extract pins and scroll scrubs it.
-         On small screens this collapses to normal flow and plays once. -->
-    <div class="zone" id="zone">
-      <div class="pin" id="pin">
-        <div class="extract" id="extract">
+      <!-- Recording picker: all three choices feed the same scroll-driven extraction. -->
+      <div class="zone" id="zone">
+        <div class="pin" id="pin">
+          <div class="extract" id="extract">
 
-          <!-- The app's own onboarding bevel: EmptyStateView.bevel —
-               an oversized phone bevel cropped by the window. -->
-          <div class="bevel" id="phone">
-            <i class="island" aria-hidden="true"></i>
-            <div class="library">
-              <div class="libhdr">
-                <div>
-                  <b>Screen recordings</b>
-                  <span>148 items · 1 selected</span>
+            <!-- The app's own onboarding bevel: EmptyStateView.bevel —
+                 an oversized phone bevel cropped by the window. -->
+            <div class="bevel" id="phone">
+              <i class="island" aria-hidden="true"></i>
+              <div class="library">
+                <div class="libhdr">
+                  <div>
+                    <b>Screen recordings</b>
+                    <span>148 items · 1 selected</span>
+                  </div>
+                </div>
+                <div class="roll" id="roll">
+                  <button class="cell pick" type="button" data-pick="0"
+                          aria-pressed="true"
+                          aria-label="Use the RunBuds recording">
+                    <img src="assets/th_rb1.jpg" alt="" width="200" height="200">
+                    <b>0:21</b>
+                    <i class="mark" aria-hidden="true"></i>
+                  </button>
+                  <button class="cell pick" type="button" data-pick="1"
+                          aria-pressed="false"
+                          aria-label="Use the The Outsiders recording">
+                    <img src="assets/th_outsiders.jpg" alt="" width="200" height="200">
+                    <b>1:14</b>
+                    <i class="mark" aria-hidden="true"></i>
+                  </button>
+                  <button class="cell pick" type="button" data-pick="2"
+                          aria-pressed="false"
+                          aria-label="Use the Oura recording">
+                    <img src="assets/th_oura.jpg" alt="" width="200" height="200">
+                    <b>0:38</b>
+                    <i class="mark" aria-hidden="true"></i>
+                  </button>
                 </div>
               </div>
-              <div class="roll" id="roll">
-                <button class="cell pick" type="button" data-pick="0"
-                        aria-pressed="true"
-                        aria-label="Use the RunBuds recording">
-                  <img src="assets/th_rb1.jpg" alt="" width="200" height="200">
-                  <b>0:21</b>
-                  <i class="mark" aria-hidden="true"></i>
-                </button>
-                <button class="cell pick" type="button" data-pick="1"
-                        aria-pressed="false"
-                        aria-label="Use the The Outsiders recording">
-                  <img src="assets/th_outsiders.jpg" alt="" width="200" height="200">
-                  <b>1:14</b>
-                  <i class="mark" aria-hidden="true"></i>
-                </button>
-                <button class="cell pick" type="button" data-pick="2"
-                        aria-pressed="false"
-                        aria-label="Use the Oura recording">
-                  <img src="assets/th_oura.jpg" alt="" width="200" height="200">
-                  <b>0:38</b>
-                  <i class="mark" aria-hidden="true"></i>
-                </button>
-                <figure class="cell"><img src="assets/th_monzo.jpg" alt="" width="200" height="200"><b>0:52</b></figure>
-                <figure class="cell"><img src="assets/th_fotmob.jpg" alt="" width="200" height="200"><b>2:06</b></figure>
-                <figure class="cell"><img src="assets/th_liven.jpg" alt="" width="200" height="200"><b>0:19</b></figure>
-                <figure class="cell"><img src="assets/th_tolan.jpg" alt="" width="200" height="200"><b>1:27</b></figure>
-                <figure class="cell"><img src="assets/th_alan.jpg" alt="" width="200" height="200"><b>0:44</b></figure>
-                <figure class="cell"><img src="assets/th_rodeo.jpg" alt="" width="200" height="200"><b>0:33</b></figure>
-              </div>
             </div>
+
+            <figure class="whose">
+              <figcaption>
+                <b>a roll like Jose’s.</b>
+                <a href="https://www.youtube.com/@appbreakdownshow" rel="noopener">inspired by App Breakdown ↗</a>
+              </figcaption>
+            </figure>
+
+            <button class="narrative-link" id="breakdown" type="button"><span class="narrative-label">Let’s take a closer look</span><span class="narrative-arrow" aria-hidden="true">↓</span></button>
           </div>
-
-          <figure class="whose">
-            <figcaption>
-              <b>a roll like Jose’s.</b>
-              <a href="https://www.youtube.com/@appbreakdownshow" rel="noopener">inspired by App Breakdown ↗</a>
-            </figcaption>
-          </figure>
-
-          <button class="narrative-link" id="breakdown" type="button"><span class="narrative-label">Let’s take a closer look</span><span class="narrative-arrow" aria-hidden="true">↓</span></button>
         </div>
       </div>
     </div>

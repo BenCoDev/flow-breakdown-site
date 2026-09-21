@@ -151,22 +151,28 @@ button,a{touch-action:manipulation}
 h1,h2,h3{text-wrap:balance;letter-spacing:-.02em;font-weight:500}
 
 /* ── hero ───────────────────────────────── */
-.hero{padding-top:clamp(52px,9vh,84px)}
+.hero-opening{
+  min-height:calc(100svh - var(--header-height));
+  padding-top:clamp(52px,calc(100svh - 680px),148px);
+  padding-bottom:36px;
+}
 .promise{display:flex;flex-direction:column;align-items:center;gap:15px;text-align:center;
   max-width:1200px;margin:0 auto;padding:0 var(--pad)}
 h1{font-size:clamp(32px,4.4vw,52px);line-height:1.08;letter-spacing:-.032em;font-weight:500}
 .hero-intro{max-width:48ch;color:var(--ink-2);font-size:clamp(16px,1.5vw,18px);
   line-height:1.45;text-wrap:balance}
 
-/* scroll zone — plain flow; the scroll position itself drives the timeline.
-   It fills the rest of the first screen so the story (ghost skeletons first)
-   starts below the fold: the opening view is promise + phone + button only. */
+/* The opening holds copy, the selectable row, and its invitation as one group.
+   Its wrapper keeps the story below the fold without adding space above the phone. */
 .zone{
-  position:relative;margin-top:clamp(30px,4.5vh,46px);
-  min-height:calc(100svh - 250px);      /* menubar + hero head, roughly */
+  position:relative;margin-top:clamp(36px,6svh,56px);
   display:flex;flex-direction:column;justify-content:center;
 }
 .pin{display:flex;justify-content:center}
+@media (max-width:720px){
+  .hero-opening{padding-top:clamp(44px,8svh,72px)}
+  .zone{margin-top:36px}
+}
 
 /* ── the story: a sticky stage inside a tall zone.
    During the flight the stage is still in flow (deltas to the phone hold);
@@ -324,7 +330,7 @@ h1{font-size:clamp(32px,4.4vw,52px);line-height:1.08;letter-spacing:-.032em;font
   .whose{
     position:absolute;margin-top:0;
     left:calc(50% + clamp(140px,13.5vw,190px) + 32px);
-    top:calc(clamp(280px,27vw,380px) * 0.52);
+    top:calc(clamp(280px,27vw,380px) * 0.38);
     max-width:236px;
     align-items:flex-start;
   }
@@ -351,7 +357,7 @@ h1{font-size:clamp(32px,4.4vw,52px);line-height:1.08;letter-spacing:-.032em;font
   --bw:clamp(280px,27vw,380px);
   position:relative;z-index:1;
   width:var(--bw);
-  height:calc(var(--bw) * 1.04);                 /* runs on past the roll, under the button */
+  height:calc(var(--bw) * 0.72);                 /* one selectable row and a dissolving tail */
   border-radius:calc(var(--bw) * 0.157) calc(var(--bw) * 0.157) 0 0;  /* 107/680; the bottom dissolves, so no corners there */
   background:linear-gradient(to bottom,
     color-mix(in srgb,var(--surface) 92%,transparent),
@@ -360,8 +366,8 @@ h1{font-size:clamp(32px,4.4vw,52px);line-height:1.08;letter-spacing:-.032em;font
     inset 0 0 0 1px rgba(255,255,255,.55),
     inset 0 1.5px 0 rgba(255,255,255,.9),
     0 0 0 1px rgba(0,0,0,.05);
-  -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 52%,transparent 100%);
-  mask-image:linear-gradient(to bottom,#000 0,#000 52%,transparent 100%);
+  -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 80%,transparent 100%);
+  mask-image:linear-gradient(to bottom,#000 0,#000 80%,transparent 100%);
 }
 :root:not([data-theme="light"]) .bevel,
 :root[data-theme="dark"] .bevel{
