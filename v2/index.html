@@ -22,8 +22,9 @@
   </nav>
   <div class="status">
     <span class="req">free · macOS 26+</span>
-    <a class="store-badge" href="#download" data-download data-store-badge aria-label="Download Flow Breakdown on the Mac App Store">
-      <img src="assets/mac-app-store.svg" alt="Download on the Mac App Store" width="156" height="40">
+    <a class="store-button" href="#download" data-download data-store-link aria-label="Mac App Store — download Flow Breakdown">
+      <img class="store-icon" src="assets/app-store-icon.png" alt="" width="32" height="32">
+      <span>Mac App Store</span>
     </a>
   </div>
 </header>
@@ -176,7 +177,10 @@
             <p class="copy-confirmation" id="copy-confirmation" role="status"></p>
             <h2 id="your-turn" tabindex="-1">now your turn.</h2>
             <p class="your-recording">try it with your own recording.</p>
-            <a class="btn download-cta" href="#download" data-download>Get it on the Mac App Store</a>
+            <a class="store-button download-cta" href="#download" data-download aria-label="Download for Mac — get Flow Breakdown on the Mac App Store">
+              <img class="store-icon" src="assets/app-store-icon.png" alt="" width="30" height="30">
+              <span data-download-label>Download for Mac</span>
+            </a>
             <a class="narrative-link" href="#get">A few practical details <span aria-hidden="true">↓</span></a>
           </section>
           <div class="mates" aria-hidden="true">
@@ -204,9 +208,15 @@
     <div class="cta">
       <img src="assets/icon.png" alt="" width="64" height="64">
       <h2>next time, don’t leave it<br>in your camera roll.</h2>
-      <a class="btn download-cta" href="#download" data-download>Get it on the Mac App Store</a>
+      <div class="store-download">
+        <a class="store-button download-cta" href="#download" data-download aria-label="Download for Mac — get Flow Breakdown on the Mac App Store">
+          <img class="store-icon" src="assets/app-store-icon.png" alt="" width="34" height="34">
+          <span data-download-label>Download for Mac</span>
+        </a>
+        <p class="store-note">Mac App Store · macOS 26+</p>
+      </div>
       <button class="email-link" type="button" data-email-link>Send a link to my Mac</button>
-      <p class="fine">free at launch · macOS 26+</p>
+      <p class="fine">free at launch</p>
     </div>
     <figure class="makernote">
       <blockquote>“I kept screen-recording apps and never doing anything with the recordings. This is the missing step.”</blockquote>

@@ -105,9 +105,20 @@ button,a{touch-action:manipulation}
 .menus a{color:var(--ink-2);text-decoration:none}
 .status{display:flex;align-items:center;gap:14px;white-space:nowrap}
 .status .req{color:var(--ink-3)}
-.store-badge{display:inline-flex;align-items:center;justify-content:center;
-  min-width:156px;min-height:44px;flex:none;text-decoration:none}
-.store-badge img{width:156px;height:40px;max-width:none}
+.store-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  min-height:44px;padding:5px 12px 5px 8px;flex:none;white-space:nowrap;
+  border:1px solid var(--line);border-radius:12px;text-decoration:none;
+  background:color-mix(in srgb,var(--ink) 10%,var(--surface));color:var(--ink);
+  font:inherit;font-size:14px;font-weight:500;line-height:1.25;cursor:pointer;
+  box-shadow:0 1px 1px rgba(0,0,0,.04)}
+.store-button .store-icon{width:32px;height:32px;max-width:none;flex:none}
+.store-button:active{background:color-mix(in srgb,var(--ink) 18%,var(--surface));transform:scale(.98)}
+@media (hover:hover) and (pointer:fine){
+  .store-button:hover{background:color-mix(in srgb,var(--ink) 15%,var(--surface));border-color:color-mix(in srgb,var(--ink) 22%,transparent)}
+}
+@media (prefers-reduced-motion:no-preference){
+  .store-button{transition:background-color .16s ease,border-color .16s ease,transform .16s ease}
+}
 @media (max-width:900px){.status .req{display:none}}
 @media (max-width:640px){ .menus a{display:none} }
 @media (max-width:380px){.menubar{padding-inline:12px;gap:8px}.menus{gap:8px}.menus .mark{display:none}}
@@ -120,7 +131,10 @@ button,a{touch-action:manipulation}
   min-height:44px;padding:13px 24px;border-radius:10px;text-decoration:none;
 }
 .btn:active{transform:scale(.97)}
-.download-cta{background:var(--ink);color:var(--surface)}
+.download-cta{min-height:48px;padding:6px 18px 6px 12px;font-size:16px}
+.download-cta .store-icon{width:34px;height:34px}
+.store-download{display:flex;flex-direction:column;align-items:center;gap:6px}
+.store-note{font-size:13px;color:var(--ink-2);line-height:20px}
 /* Continuations read as the next sentence, with a comfortable invisible target. */
 .narrative-link{display:inline-flex;align-items:center;justify-content:center;gap:8px;
   min-height:44px;padding:10px 12px;border:0;background:none;color:var(--ink-2);
@@ -186,7 +200,8 @@ h1{font-size:clamp(32px,4.4vw,52px);line-height:1.08;letter-spacing:-.032em;font
 .copy-confirmation{font-size:13.5px;line-height:20px;color:var(--ink-2);text-wrap:balance}
 .post-copy h2{font-size:22px;line-height:1.2}
 .your-recording{font-size:14px;line-height:20px;color:var(--ink-2)}
-.post-copy .btn{font-size:15px;padding:11px 22px;min-height:44px}
+.post-copy .download-cta{font-size:15px;padding:6px 16px 6px 10px;min-height:44px}
+.post-copy .store-icon{width:30px;height:30px}
 .post-copy .narrative-link{text-decoration:none}
 .post-copy:not([hidden]) ~ .mates{display:none}
 @media (max-width:720px){
@@ -496,7 +511,7 @@ h1{font-size:clamp(32px,4.4vw,52px);line-height:1.08;letter-spacing:-.032em;font
   border:1px solid var(--line);border-radius:24px;
   padding:clamp(34px,6vw,62px) clamp(24px,5vw,64px);
   display:flex;flex-direction:column;align-items:center;gap:16px;width:100%;max-width:960px}
-.cta img{border-radius:12px}
+.cta > img{border-radius:12px}
 .makernote{max-width:620px;display:flex;flex-direction:column;gap:8px}
 .makernote blockquote{font-style:italic;color:var(--ink-2);font-size:17px;line-height:1.5}
 .makernote figcaption{font-size:14px;color:var(--ink-3)}

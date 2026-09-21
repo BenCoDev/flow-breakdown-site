@@ -16,7 +16,7 @@ Deploy by copying this folder into `BenCoDev/flow-breakdown-site` as `v2/`, givi
 **Current casing rule.** Short narrative headings and captions stay lowercase, while proper
 names keep their spelling: **Figma**, **Mac**, **Flow Breakdown**, and **App Breakdown**.
 Controls use sentence case: **How it works**, **Let’s take a closer look**, **Copy this example
-to Figma**, **Get it on the Mac App Store**, **A few practical details**, and **Send a link to
+to Figma**, **Download for Mac**, **A few practical details**, and **Send a link to
 my Mac**. Practical body paragraphs, dialog headings, helper sentences, status/error messages,
 and demo UI labels also use sentence case. Demo names retain their capitals: Mia, Sam, and Leo.
 The inspiration credit remains the narrative aside **inspired by App Breakdown ↗**.
@@ -25,8 +25,8 @@ The inspiration credit remains the narrative aside **inspired by App Breakdown �
 
 `download.js` owns the download CTAs independently of animation/reduced motion.
 Following HeyClicky's pattern, touch devices below 1024px see **Send it to me** on the
-text CTAs and open a native email dialog; desktop sees **Get it on the Mac App Store**.
-The header uses the Mac App Store badge on both sizes, with an accessible label describing
+text CTAs and open a native email dialog; desktop sees **Download for Mac**.
+The custom header button keeps its **Mac App Store** label on both sizes, with an accessible label describing
 the appropriate action. Narrow desktop windows keep the desktop behavior. The close section
 also offers an email link on desktop.
 
@@ -65,14 +65,28 @@ link now points to `#zone`; the demo leads directly to practical questions about
 macOS 26 or later, Figma layers, optional voice, and price. Silent recordings still become a board;
 voice analysis maps the visitor's own reactions rather than claiming to judge the interface.
 
-**CTA shapes · 21 September 2026.** The header uses Apple's unmodified
+**Current CTA shapes · 21 September 2026.** Download actions use a custom gray `.store-button`
+with a 12px radius and the blue App Store icon. The header button is 44px high with a 32px icon
+and the label **Mac App Store**. The closing **Download for Mac** button is 48px high with a
+34px icon; **Mac App Store · macOS 26+** sits underneath, with **free at launch** on its own line.
+After copying, the button keeps a 44px height and 30px icon so the reserved footer still fits.
+The example-copy action stays blue with its existing 10px radius.
+
+The gray fill mixes 10% ink into the surface, adapts to the theme, and has a subtle border.
+Hover raises the mix to 15%; active uses 18%. Keyboard focus remains visible, and transitions
+only run when reduced motion is not requested. `download.js` updates only the
+`[data-download-label]` span, preserving each icon and the header's fixed label. Accessible labels
+describe the store destination on desktop and the email handoff on mobile.
+
+`assets/app-store-icon.png` is an unmodified 256px PNG extracted from the installed
+`/System/Applications/App Store.app/Contents/Resources/AppIcon.icns` using `sips` conversion.
+This custom control is not an official Apple download badge. The earlier unmodified
 [Mac App Store SVG badge](https://developer.apple.com/app-store/marketing/guidelines/images/badge-download-on-the-mac-app-store.svg)
-at its 156.1 × 40 proportion, inside a 44px hit area. See Apple's
-[marketing guidelines](https://developer.apple.com/app-store/marketing/guidelines/).
+remains in `assets/mac-app-store.svg` as an unused history asset; it is no longer shown.
+Its reference remains Apple's [marketing guidelines](https://developer.apple.com/app-store/marketing/guidelines/).
 The header has a 64px minimum height (65px with its current content, padding, and border).
-Other filled buttons use a 10px radius; download actions are dark, while the example-copy action
-stays blue. Scoping the picker checkmark to `.cell .mark` prevents its positioning styles from
-displacing the app icon in the navigation.
+Scoping the picker checkmark to `.cell .mark` prevents its positioning styles from displacing
+the app icon in the navigation.
 
 The closing headline is **next time, don’t leave it in your camera roll.** with no supporting lede.
 
@@ -240,7 +254,7 @@ teardown — the three screens embedded as JPEG data-URIs, chips, labels, voice 
 on the pasteboard (`teardownSVG()` in `app.js`); ⌘V in Figma lands it as editable layers. The
 successful copy reveals **"Copied. Open Figma and paste with ⌘V."**, **"now your turn."**,
 and **"try it with your own recording."** The shortcut changes to Ctrl+V on other desktop
-platforms. A dark **Get it on the Mac App Store** button and a quiet **A few practical details ↓**
+platforms. A gray **Download for Mac** button with the App Store icon and a quiet **A few practical details ↓**
 link to `#get` continue the story. The footer reserves that space
 beforehand: copying does not move the canvas or scroll the page. The confirmation returns when
 the visitor scrolls back to this scene; selecting another recording clears it. Keyboard focus

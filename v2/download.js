@@ -21,12 +21,16 @@
 
   function updateLinks() {
     links.forEach(function (link) {
-      if (link.hasAttribute('data-store-badge')) {
+      const label = link.querySelector('[data-download-label]');
+      if (label) {
+        label.textContent = mobile.matches ? 'Send it to me' : 'Download for Mac';
         link.setAttribute('aria-label', mobile.matches
-          ? 'Send yourself a Mac App Store link'
-          : 'Download Flow Breakdown on the Mac App Store');
+          ? 'Send it to me — email a Mac App Store link'
+          : 'Download for Mac — get Flow Breakdown on the Mac App Store');
       } else {
-        link.textContent = mobile.matches ? 'Send it to me' : 'Get it on the Mac App Store';
+        link.setAttribute('aria-label', mobile.matches
+          ? 'Mac App Store — email yourself a link'
+          : 'Mac App Store — download Flow Breakdown');
       }
       link.href = DOWNLOAD_URL || '#download';
     });
