@@ -21,17 +21,19 @@
   --mono:ui-monospace,"SF Mono",Menlo,monospace;
   --round:ui-rounded,"SF Pro Rounded","SF Compact Rounded",var(--sans);
 
-  --card-w:200px;            /* Figma: 200 × 433 */
+  --header-height:65px;
+  --story-header-gap:clamp(24px,4svh,40px);
+  --story-min-top:calc(var(--header-height) + var(--story-header-gap) + 24px);
+  --story-footer-height:200px;
+  --card-max:200px;          /* Figma: 200 × 433 */
   --card-ratio:2.165;        /* 433/200 — the ratio every card asset is cut to */
+  /* Keep the canvas's 24px overhang clear of the menu, then fit the assets.
+     114px covers labels/notes; the footer includes the complete copy follow-up. */
+  --card-w:clamp(104px,calc((100svh - var(--story-min-top) - 114px - var(--story-footer-height) - 18px) / var(--card-ratio)),var(--card-max));
   --card-h:calc(var(--card-w) * var(--card-ratio));
   --gap:40px;
   --pad:clamp(20px,5vw,120px);
   --milk:rgba(255,255,255,.5);       /* the frost sheet's own body */
-}
-
-/* Leave room for the menu and the complete invitation on common laptop heights. */
-@media (min-width:721px) and (max-height:900px){
-  :root{--card-w:clamp(150px,calc((100svh - 465px) / 2.165),200px)}
 }
 
 @media (prefers-color-scheme:dark){
@@ -87,7 +89,7 @@ button,a{touch-action:manipulation}
 .menubar{
   position:sticky;top:0;z-index:60;
   display:flex;align-items:center;justify-content:space-between;gap:16px;
-  min-height:64px;padding:10px 16px;
+  min-height:var(--header-height);padding:10px 16px;
   background:color-mix(in srgb,var(--surface) 78%,transparent);
   backdrop-filter:saturate(180%) blur(20px);
   -webkit-backdrop-filter:saturate(180%) blur(20px);
@@ -173,12 +175,9 @@ h1{font-size:clamp(32px,4.4vw,52px);line-height:1.08;letter-spacing:-.032em;font
 .armed .storyzone::after{content:"";display:block;height:2400px}
 .stage{
   /* Reserve the follow-up before copying, so success never moves the canvas.
-     114px accounts for the labels, notes, board padding and footer gap.
-     Short windows let the top move away to keep the actions reachable. */
-  --story-footer-height:248px;
+     The top clearance is a floor: fitting the footer must never override it. */
   --stage-height:calc(var(--card-h) + 114px + var(--story-footer-height));
-  --stagetop:min(max(64px, calc((100svh - var(--stage-height)) / 2 + 48px)),
-    calc(100svh - var(--stage-height) - 18px));
+  --stagetop:max(var(--story-min-top), calc((100svh - var(--stage-height)) / 2 + 48px));
   position:sticky;top:var(--stagetop);
   max-width:1200px;margin:0 auto;padding:0 var(--pad);
 }
@@ -205,7 +204,6 @@ h1{font-size:clamp(32px,4.4vw,52px);line-height:1.08;letter-spacing:-.032em;font
 .post-copy .store-icon{width:30px;height:30px}
 .post-copy:not([hidden]) ~ .mates{display:none}
 @media (max-width:720px){
-  .stage{--story-footer-height:268px}
   .story-next,.ctafig{top:100px}
 }
 @media (prefers-reduced-motion:no-preference){
@@ -474,7 +472,7 @@ h1{font-size:clamp(32px,4.4vw,52px);line-height:1.08;letter-spacing:-.032em;font
 
 /* Small screens: the canvas is wider than the phone, so let it bleed. */
 @media (max-width:720px){
-  :root{--card-w:150px;--gap:16px}
+  :root{--card-max:150px;--story-footer-height:220px;--gap:16px}
   .note{margin-left:0}
   .chip{font-size:11px;padding:3px 10px 3px 4px}
   .board{overflow:visible}

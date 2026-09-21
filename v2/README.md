@@ -140,8 +140,13 @@ animation driver is involved. Real gestures still cancel a glide.
 Hidden actions are excluded from keyboard focus. The initial glide moves focus to
 the continuation without scrolling again; the last step hands focus to Copy this example to Figma.
 Reduced motion keeps the static board and does not show these animated-story controls.
-Captions wrap on narrow screens; continuations retain a 44px tap target. Short desktop
-windows allow the top of the tall stage to scroll away so the footer remains reachable.
+Captions wrap on narrow screens; continuations retain a 44px tap target. The pinned canvas
+keeps at least `clamp(24px, 4svh, 40px)` below the 65px menu. The sticky top includes the
+canvas's 24px upward overhang and cannot be reduced to fit the bottom of the stage.
+Cards use the remaining viewport height, capped at 200px wide (150px on narrow screens),
+with 200px/220px reserved for the follow-up. This avoids moving the canvas when copying.
+Verified through all five steps at 1472×816 and across 640–1000px window heights; the
+complete download follow-up fits at 1200×640, and the narrow layout was checked at 390×844.
 
 Ported from `macos/Sources/FlowBreakdown/Views/ExtractionScene.swift`, which is itself a port of a
 web original — the source says *"a uniform scale around its top-left, like the web version's FLIP."*
@@ -231,7 +236,8 @@ pop — while arrivals are one-way spans. Do not key chips/notes/lane back to `p
 ends with a fully-dressed board makes the beats read as re-showing things already seen. The
 board (plus all its overlays) lives in `.stage`, which is `position: sticky` inside `.storyzone`.
 During the flight the stage is still in normal flow — the FLIP deltas to the phone hold exactly as
-before — then it pins at `--stagetop` (64 px) and ~2 400 px of slack drives the beats. One `p`
+before — then it pins at `--stagetop` (header + visible gap + canvas overhang, or centered lower)
+and ~2 400 px of slack drives the beats. One `p`
 over the whole zone (`Motion.scroll` targeting `#storyzone`, `['start 0.85','end 1']`); `measure()`
 computes `Wf`, the share of the range spent flying, and `render()` splits: `pf = span(p,0,Wf)` is
 the old flight untouched, `q = span(p,Wf,1)` feeds the beats.
