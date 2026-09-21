@@ -140,10 +140,14 @@ button,a{touch-action:manipulation}
   min-height:44px;padding:10px 12px;border:0;background:none;color:var(--ink-2);
   font:inherit;font-size:14px;font-weight:400;cursor:pointer;text-decoration:none}
 .narrative-link[hidden]{display:none}
-.narrative-link > span[aria-hidden]{color:var(--ink-2);transition:transform .18s ease}
+.narrative-arrow{display:inline-block;color:var(--ink-2);text-decoration:none}
 @media (hover:hover) and (pointer:fine){
-  .narrative-link:hover{color:var(--ink);text-decoration:underline;text-underline-offset:4px}
-  .narrative-link:hover > span[aria-hidden]{transform:translateY(2px)}
+  .narrative-link:hover{color:var(--ink)}
+  .narrative-link:hover > .narrative-label{text-decoration:underline;text-underline-offset:4px}
+}
+@media (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
+  .narrative-link:hover > .narrative-arrow{animation:narrative-arrow-bob 1.2s ease-in-out infinite}
+  @keyframes narrative-arrow-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(3px)}}
 }
 .fine{font-size:13px;color:var(--ink-3)}
 .lede{color:var(--ink-2);max-width:62ch}
@@ -572,7 +576,7 @@ footer a{text-decoration:none}
   html{scroll-behavior:auto}
   .mark,.mark::after{transition:none}
   .caret path{animation:none}
-  .narrative-link > span[aria-hidden]{transition:none;transform:none}
+  .narrative-arrow{animation:none;transform:none}
   .mate .p{animation:none}
   .zone{height:auto}
   .storyzone{padding-bottom:0}

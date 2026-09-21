@@ -102,8 +102,14 @@ window but vanishes on this light canvas, so it mixes `--surface` 92% → 62% in
 
 The walkthrough reads **asset → narrative → next step**. Narrative captions use 16px regular
 primary text; continuation links use 14px regular secondary text, with a small arrow and an
-invisible 44px target. Hover adds contrast and an underline. Filled buttons are reserved for
-copying the example and downloading the app. The hero promise stays above the first asset.
+invisible 44px target. Hover adds contrast and underlines only `.narrative-label`; the separate
+`.narrative-arrow` never receives an underline. On fine pointers with hover and
+`prefers-reduced-motion: no-preference`, the arrow loops down 3px and back (`0 → 3px → 0`,
+1.2 seconds, `ease-in-out`) while hovered. It stays still under reduced motion. This applies
+to the hero invitation, the story continuation, and the post-copy practical-details link
+without changing their hit areas or navigation. Filled buttons are reserved for copying the
+example and downloading the app. The hero promise stays above the first asset. This hover
+refinement is implemented on the live page; the Figma prototype's motion is unchanged.
 
 The hero's **Let’s take a closer look ↓** and the continuation beneath each caption use
 quiet text styling. The same continuation button changes with scroll position:
