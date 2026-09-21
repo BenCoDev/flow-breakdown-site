@@ -484,7 +484,8 @@
       ctafig.style.visibility = G > 0.5 && !showPostCopy ? 'visible' : 'hidden';
       ctafig.setAttribute('aria-busy', String(copyPending));
       ctafig.setAttribute('aria-disabled', String(copyPending));
-      if (ctaLabel) ctaLabel.textContent = copyPending ? 'Copying…' : coarse ? 'Send it to your Mac' : 'Copy this example to Figma';
+      var nextCtaLabel = copyPending ? 'Copying…' : coarse ? 'Send it to your Mac' : 'Copy this example to Figma';
+      if (ctaLabel && ctaLabel.textContent !== nextCtaLabel) ctaLabel.textContent = nextCtaLabel;
     }
     if (stage) stage.classList.toggle('canvasmode', C > 0.5);
 
@@ -545,9 +546,12 @@
     return { start: s, end: e, flightEnd: s + 0.32 * (e - s) };
   }
 
-  function sync() {                 // recompute p from the page, by hand
+  function sync(force) {            // recompute p from the page, by hand
     var g = scrubRange(), len = g.end - g.start;
-    setProgress(len > 0 ? (window.scrollY - g.start) / len : 1);
+    var next = clamp(len > 0 ? (window.scrollY - g.start) / len : 1, 0, 1);
+    // Outside the story, scrolling leaves the scene unchanged. Measurement
+    // clears its transforms, so callers that measure must force restoration.
+    if (force || next !== progress) setProgress(next);
   }
 
   // ONE driver, rAF-coalesced. Motion's scroll() used to ride along here and
@@ -740,7 +744,7 @@
     buildXtras();
     measure();
     if (!geo) { document.body.classList.remove('armed'); return; }
-    sync();                          // wherever the page is, that is the state
+    sync(true);                      // restore the scene after measuring
   }
 
   picks.forEach(function (b, i) {
@@ -755,13 +759,13 @@
     });
   });
 
-  addEventListener('resize', function () { measure(); sync(); });
+  addEventListener('resize', function () { measure(); sync(true); });
 
   // Only rewind once the real layout is settled, so the end state is never
   // replaced by a half-measured one.
   picks.forEach(function (b) {
     var im = b.querySelector('img');
-    if (im && !im.complete) im.addEventListener('load', function () { measure(); sync(); });
+    if (im && !im.complete) im.addEventListener('load', function () { measure(); sync(true); });
   });
 
   if (document.readyState !== 'loading') armOnce();

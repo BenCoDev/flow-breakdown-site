@@ -57,30 +57,25 @@
 html{scroll-behavior:smooth}
 html,body{overflow-x:clip}   /* the screen strip runs past the viewport */
 
-/* The page rests on LIQUID GLASS: a colour field behind a real frost sheet
-   (fixed backdrop-filter) — the milky blur is the material, not a tint.
-   The dots are deliberately NOT here: cream-with-dots is the app's CANVAS,
-   and that surface belongs to the canvas container, not the page. */
+/* Soft colour and a milk tint form a static background. A viewport-sized live
+   backdrop blur forced the browser to recompose it alongside every scroll frame.
+   Keep real backdrop blur local to the menu; the dots belong to the canvas. */
 body{
+  isolation:isolate;
   background:var(--canvas);
   color:var(--ink);
   font-family:var(--sans);
   -webkit-font-smoothing:antialiased;
   line-height:1.5;
 }
-body::before{                              /* the colour behind the glass */
-  content:"";position:fixed;inset:0;z-index:-2;
+body::before{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
   background:
+    linear-gradient(var(--milk),var(--milk)),
     radial-gradient(52% 42% at 14% 6%,  rgba(0,122,255,.32), transparent 68%),
     radial-gradient(44% 38% at 86% 12%, rgba(255,149,0,.26), transparent 66%),
     radial-gradient(50% 42% at 70% 92%, rgba(52,199,89,.22), transparent 66%),
     radial-gradient(40% 36% at 22% 88%, rgba(255,45,85,.14), transparent 66%);
-}
-body::after{                               /* the frost sheet itself */
-  content:"";position:fixed;inset:-60px;z-index:-1;
-  -webkit-backdrop-filter:blur(70px) saturate(1.25);
-  backdrop-filter:blur(70px) saturate(1.25);
-  background:var(--milk);
 }
 img{max-width:100%;display:block}
 a{color:inherit}

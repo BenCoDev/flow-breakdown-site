@@ -207,15 +207,16 @@ from the page entirely (147 KB lighter). **A scroll-attached `p` must have exact
 | 0 | the board's top reaches 85 % down the viewport (`'start 0.85'`) |
 | 1 | the board's bottom reaches the viewport bottom (`'end 1'`) |
 
-**Two words, two materials — do not mix them.** *Liquid glass* is the frost-blur material;
-*canvas* is the app's cream-with-dots surface. The page rests on liquid glass: `body::before` is
-a fixed colour field, `body::after` is a fixed frost sheet — real `backdrop-filter: blur(70px)`
-over it, bodied by `--milk` (white .5 light, smoke .55 dark). The dot grid is deliberately NOT
-on the page: dots are the canvas's identity, and the canvas is the container that arrives in
-beat 4 — `#glass` (historical name) is cream `--canvas` + the dot grid, lifted by an ambient
-shadow. The teardown literally lands on the app's own surface, sitting on the glass page.
-(iOS ignores `position: fixed` backdrop tricks less than `background-attachment`, but mobile
-remains untested.)
+**Two surfaces.** The page has a fixed, static colour field with a milk tint in `body::before`;
+the canvas is the app's cream-with-dots surface. A reported scroll flicker prompted removal of
+the full-window 70px backdrop blur on 21 September 2026. Soft radial gradients and the same
+`--milk` tint retain the atmosphere without sampling the entire backdrop during scrolling.
+The small menu bar retains its local blur. The canvas arriving at beat 4 — `#glass`
+(historical name) — uses cream `--canvas`, the dot grid, and an ambient shadow.
+
+The scroll driver also skips rendering when its clamped progress has not changed, and copy
+button text only updates when its label changes. Initial setup and remeasurement force a render;
+copy, drag, and recording changes retain their direct renders. The scroll mapping is unchanged.
 
 That is ~440 px of scroll on a desktop window — short enough that an ordinary scroll-through sees
 the whole flight, long enough to have real texture.
