@@ -1,12 +1,11 @@
 /* Download/email handoff is independent of the scroll demo and reduced motion. */
 (function () {
   'use strict';
-  // Set these when the release and an email delivery endpoint are available.
-  // The endpoint must validate/rate-limit requests and return { delivered: true }
+  // Add an email endpoint when automatic delivery is available.
+  // It must validate/rate-limit requests and return { delivered: true }
   // only after accepting delivery. Never put email-service credentials here.
-  const DOWNLOAD_URL = ''; // Set the real release URL when the installer is available.
+  const DOWNLOAD_URL = 'https://apps.apple.com/us/app/flow-breakdown/id6813535098';
   const EMAIL_ENDPOINT = '';
-  const PAGE_URL = 'https://bencodev.github.io/flow-breakdown-site/';
   const mobile = matchMedia('(hover: none) and (pointer: coarse)');
   const dialog = document.getElementById('download-dialog');
   const form = document.getElementById('download-email-form');
@@ -25,25 +24,23 @@
       const header = link.hasAttribute('data-store-link');
       const icon = link.querySelector('.store-icon');
       if (label) label.textContent = mobile.matches
-        ? (header ? 'Email me a link' : 'Email me the Mac link')
+        ? 'Send it to me'
         : (header ? 'Mac App Store' : 'Download for Mac');
       if (icon) icon.src = mobile.matches ? 'assets/mail-icon.png' : 'assets/app-store-icon.png';
       link.setAttribute('aria-label', mobile.matches
-        ? (header ? 'Email me a link to Flow Breakdown for Mac' : 'Email me the Mac link')
+        ? 'Send me a link to Flow Breakdown for Mac'
         : (header ? 'Mac App Store — download Flow Breakdown' : 'Download for Mac — get Flow Breakdown on the Mac App Store'));
-      link.href = DOWNLOAD_URL || '#download';
+      link.href = DOWNLOAD_URL;
     });
   }
 
-  function openEmail(source, unavailable) {
+  function openEmail(source) {
     trigger = source;
     form.reset();
     form.hidden = false;
     feedback.textContent = '';
-    title.textContent = unavailable ? 'The download link is coming.' : 'Email yourself the Mac link.';
-    description.textContent = unavailable
-      ? 'The download isn’t available on this page yet. Send yourself the page to come back later.'
-      : 'Flow Breakdown is a Mac app. Email yourself a link to open when you’re back at your desk.';
+    title.textContent = 'Get Flow Breakdown';
+    description.textContent = 'It’s a Mac app. Email yourself a link for when you’re back at your desk.';
     send.textContent = EMAIL_ENDPOINT ? 'Send me the link' : 'Open email draft';
     send.disabled = false;
     document.getElementById('download-help').textContent = EMAIL_ENDPOINT
@@ -56,22 +53,22 @@
   links.forEach(function (link) {
     link.addEventListener('click', function (event) {
       if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
-      if (mobile.matches || !DOWNLOAD_URL) {
+      if (mobile.matches) {
         event.preventDefault();
-        openEmail(link, !mobile.matches && !DOWNLOAD_URL);
+        openEmail(link);
       }
     });
   });
   document.querySelectorAll('[data-email-link]').forEach(function (button) {
     button.addEventListener('click', function () {
-      openEmail(button, false);
+      openEmail(button);
     });
   });
   const exampleLink = document.getElementById('ctafig');
   if (exampleLink) exampleLink.addEventListener('click', function (event) {
     if (!mobile.matches) return;
     event.preventDefault();
-    openEmail(exampleLink, false);
+    openEmail(exampleLink);
   });
   dialog.querySelector('.download-close').addEventListener('click', function () { dialog.close(); });
   dialog.addEventListener('click', function (event) {
@@ -90,7 +87,7 @@
     feedback.textContent = '';
     const recipient = email.value.trim();
     if (!EMAIL_ENDPOINT) {
-      const body = 'Open this on your Mac to get Flow Breakdown:\n\n' + (DOWNLOAD_URL || PAGE_URL) + '\n\nRequires macOS 26 or later.';
+      const body = 'Open this on your Mac to get Flow Breakdown:\n\n' + DOWNLOAD_URL + '\n\nRequires macOS 26 or later.';
       window.location.href = 'mailto:' + encodeURIComponent(recipient) + '?subject=' + encodeURIComponent('Flow Breakdown for your Mac') + '&body=' + encodeURIComponent(body);
       feedback.textContent = 'Send the draft from your email app. If it didn’t open, check that an email app is set up on this device.';
       return;

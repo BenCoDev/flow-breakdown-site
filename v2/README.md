@@ -48,30 +48,31 @@ All attribution rows reserve 32px so the signatures stay aligned.
 ### Download CTA and mobile email handoff
 
 `download.js` owns the download CTAs independently of animation/reduced motion.
-Touch devices without hover use the Apple Mail icon and **Email me the Mac link** on
-the main CTAs, including the example handoff. The compact header says **Email me a link**.
+Touch devices without hover use the Apple Mail icon and **Send it to me** on
+the main CTAs, including the example handoff and compact header.
 These actions open an email dialog and restore focus to the button that opened it.
 The same live media query covers phones and larger touch tablets. Desktop keeps the
 App Store/Figma icons and download/copy actions, even in narrow windows; the close
 section also offers an email link on desktop.
 
-**The live download URL is not connected:** `DOWNLOAD_URL` is currently empty. The earlier
-`example.com` DMG URL remains only in Figma as a prototype placeholder, not a live download.
+**The live App Store URL is connected:** all three download links (header, post-copy,
+and closing CTA) open [Flow Breakdown on the Mac App Store](https://apps.apple.com/us/app/flow-breakdown/id6813535098).
+The URL was supplied by Ben and verified on 22 September 2026. Static HTML anchors
+use the same URL so the download also works without JavaScript.
+The earlier `example.com` DMG URL remains only in Figma as a prototype placeholder.
 
-**Connections still required:** set `DOWNLOAD_URL` to the real public Mac App Store URL
-and optionally `EMAIL_ENDPOINT` to a transactional email service endpoint. No release
-was published in the app repository when this was implemented. Until configured, the
-desktop CTA explains that the link is unavailable and offers a reminder. Email currently
-opens a prefilled draft addressed to the visitor; it does not claim an email was sent.
-Drafts link to the main public landing page, never localhost.
+**Connection still required:** `EMAIL_ENDPOINT` is empty. Email currently opens a
+prefilled draft addressed to the visitor with the real App Store URL; it does not
+claim an email was sent. The dialog says **Get Flow Breakdown**, explains that it is
+a Mac app, and keeps **Open email draft** as the submit label until delivery is connected.
 
 An email endpoint must accept `{ email }`, validate and rate-limit server-side, send the
 configured download link, and return `{ delivered: true }` only on accepted delivery.
 Keep credentials on the server. GitHub Pages cannot run this endpoint itself.
 
 Checked: dialog at 390px, Escape/focus return, syntax, and mocked mobile/desktop routing,
-email validation/encoding, public URL, and missing-release behavior. Actual email delivery
-and a real app download remain pending those connections.
+email validation/encoding and the App Store URL in both desktop links and drafts.
+Automatic email delivery remains unconnected; installation was not performed.
 
 The page *is* a Flow Breakdown canvas — dotted background, the app's own Glass tokens, and the site
 nav rendered as a macOS menu bar (honest here, because it is a Mac app). Prompted by
@@ -326,7 +327,7 @@ resets drag offsets.
 The **voice band is gone** from the page — beat 2 demonstrates it. Its reassurance line lives on
 as the **voice is optional** row in the practical bits: “No voiceover needed. Silent recordings
 still become a board.” The close section owns `id="download"`; download routing remains in
-`download.js`, including its missing-link reminder while the store URL is unconnected.
+`download.js`, with desktop App Store links and a mobile email handoff.
 
 **"Copy this example to Figma" really copies.** On fine-pointer devices the click builds an SVG of the current
 teardown — the three screens embedded as JPEG data-URIs, chips, labels, voice notes — and puts it
@@ -428,8 +429,8 @@ branch, no play-once state machine.
 
 ## Before this can be published
 
-- [ ] **Download links land on the close section** (`#download` exists now) but there is still no
-      release or App Store URL behind the "download for mac" button.
+- [x] **Download links are connected** to the real App Store listing supplied by Ben on
+      22 September 2026. Mobile email drafts contain the same listing URL.
 - [ ] **Third-party app screens.** The roll shows Monzo, Oura, The Outsiders, FotMob, Liven, Tolan,
       Alan and Rodeo, sourced from Mobbin with its footer cropped. Fine as placeholders; publishing
       is a rights decision. `decisions.md` already bars naming Mobbin.

@@ -513,7 +513,7 @@
       ctafig.style.visibility = G > 0.5 && !showPostCopy ? 'visible' : 'hidden';
       ctafig.setAttribute('aria-busy', String(copyPending));
       ctafig.setAttribute('aria-disabled', String(copyPending));
-      var nextCtaLabel = copyPending ? 'Copying…' : coarse ? 'Email me the Mac link' : 'Copy this example to Figma';
+      var nextCtaLabel = copyPending ? 'Copying…' : coarse ? 'Send it to me' : 'Copy this example to Figma';
       if (ctaLabel && ctaLabel.textContent !== nextCtaLabel) ctaLabel.textContent = nextCtaLabel;
     }
     if (stage) stage.classList.toggle('canvasmode', C > 0.5);
@@ -665,7 +665,7 @@
       var icon = ctafig.querySelector('.store-icon');
       if (icon) icon.src = coarse ? 'assets/mail-icon.png' : 'assets/figma-icon.png';
     }
-    if (ctaLabel) ctaLabel.textContent = coarse ? 'Email me the Mac link' : 'Copy this example to Figma';
+    if (ctaLabel) ctaLabel.textContent = coarse ? 'Send it to me' : 'Copy this example to Figma';
     render(progress);
   }
   touchMedia.addEventListener('change', updateExampleAction);
