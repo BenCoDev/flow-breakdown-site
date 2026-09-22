@@ -537,10 +537,11 @@ h1{font-size:clamp(32px,4.4vw,52px);line-height:1.08;letter-spacing:-.032em;font
   padding:clamp(34px,6vw,62px) clamp(24px,5vw,64px);
   display:flex;flex-direction:column;align-items:center;gap:16px;width:100%;max-width:960px}
 .cta > img{border-radius:12px}
-.testimonials{display:flex;flex-wrap:wrap;justify-content:center;gap:32px 48px;width:100%;max-width:960px}
-.makernote{flex:1 1 320px;max-width:620px;display:flex;flex-direction:column;gap:8px}
+.testimonials{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px;width:100%;max-width:960px}
+.makernote{display:flex;flex-direction:column;gap:8px;min-width:0}
 .makernote blockquote{font-style:italic;color:var(--ink-2);font-size:17px;line-height:1.5}
 .makernote figcaption{margin-top:auto;font-size:14px;color:var(--ink-3)}
+@media (max-width:900px){.testimonials{grid-template-columns:1fr;max-width:620px}}
 
 footer{max-width:1200px;margin:0 auto;padding:64px var(--pad) 72px;
   display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;

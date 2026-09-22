@@ -26,10 +26,12 @@ The inspiration credit remains the narrative aside **inspired by App Breakdown �
 
 ### Quotes
 
-The closing quotes sit side by side on desktop and stack on mobile. Ben's attribution
+The three closing quotes sit side by side on desktop and stack below 901px. Ben's attribution
 is **Ben, design engineer at noa**. The quote attributed to **Nico, designer at X** was
 drafted at the user's request and is visibly marked **Draft quote**; it is not a verified
-statement from Nico.
+statement from Nico. Jose's quote is transcribed verbatim from the message screenshot
+supplied by the user and signed **Jose, App Breakdown**: “I was literally right now
+taking 1000 screenshots of an app”.
 
 ### Download CTA and mobile email handoff
 
@@ -425,8 +427,9 @@ branch, no play-once state machine.
       **the spelling** — "Jose" comes only from Ben; the channel shows no personal name anywhere,
       so it could not be verified; and **the photo** — it is his YouTube avatar, captured from the
       channel page. If he has a preferred headshot, swap `assets/jose.jpg`.
-      The credit deliberately reads *"a roll like Jose's"* and carries **no quote or endorsement** —
-      the screens shown are not his actual recordings, and he has not said anything about the app.
+      The hero still reads *"a roll like Jose's"*; the screens shown are not his actual recordings.
+      The closing section now also includes his message about taking 1000 screenshots,
+      supplied verbatim by Ben on 22 September 2026.
 - [ ] **Mobile is untested on a device.** The breakpoint could not be exercised in this environment —
       `resize_window` reported success but the viewport never changed. The desktop path was verified
       in a real browser; the mobile branch has only been reasoned about. Test it on a phone first.
