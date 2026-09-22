@@ -328,15 +328,15 @@ h1{font-size:clamp(32px,4.4vw,52px);line-height:1.08;letter-spacing:-.032em;font
 /* A small attribution card sits across the phone's upper-right rim. Keeping it
    outside the bevel avoids masking the link; the recording title stays clear. */
 .whose{
-  position:absolute;z-index:2;top:-46px;
+  position:absolute;z-index:2;top:-34px;
   right:max(20px,calc(50% - clamp(140px,13.5vw,190px) - 24px));
   font-family:var(--round);border-radius:14px;
-  background:color-mix(in srgb,var(--surface) 78%,transparent);
-  backdrop-filter:blur(12px) saturate(140%);
-  -webkit-backdrop-filter:blur(12px) saturate(140%);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),
-    0 0 0 1px color-mix(in srgb,var(--ink) 7%,transparent),
-    0 5px 18px -8px rgba(0,0,0,.18);
+  background:color-mix(in srgb,var(--surface) 48%,transparent);
+  backdrop-filter:blur(20px) saturate(150%);
+  -webkit-backdrop-filter:blur(20px) saturate(150%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5),
+    0 0 0 1px color-mix(in srgb,var(--ink) 4%,transparent),
+    0 4px 16px -10px rgba(0,0,0,.14);
 }
 #breakdown{margin-top:-42px;position:relative;z-index:3}
 .whose a{display:flex;flex-direction:column;justify-content:center;
