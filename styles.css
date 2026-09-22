@@ -398,7 +398,7 @@ h1{font-size:clamp(32px,4.4vw,52px);line-height:1.08;letter-spacing:-.032em;font
 .libhdr b{display:block;font-size:clamp(13px,1.35vw,16px);font-weight:600;letter-spacing:-.015em}
 .libhdr span{display:block;font-size:clamp(9px,1vw,11px);color:var(--ink-3);margin-top:1px}
 .roll{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;
-  border-radius:10px;overflow:hidden}
+  border-radius:10px 10px 0 0;overflow:hidden}
 .cell{position:relative;margin:0;padding:0;border:0;background:none;display:block}
 .cell.pick{cursor:pointer}
 .cell.pick:focus-visible{outline:2px solid var(--accent);outline-offset:-2px;border-radius:2px}
