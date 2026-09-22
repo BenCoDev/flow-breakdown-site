@@ -188,6 +188,9 @@ h1{font-size:clamp(32px,4.4vw,52px);line-height:1.08;letter-spacing:-.032em;font
 @media (max-width:720px) and (max-height:700px){
   .hero-opening{padding-top:28px}
 }
+@media (max-width:360px) and (max-height:700px){
+  .hero-intro{font-size:15px}
+}
 @media (max-height:700px){
   /* The copy needs clear space above the card when there is little flex room. */
   .zone{margin-top:70px}
@@ -212,6 +215,12 @@ h1{font-size:clamp(32px,4.4vw,52px);line-height:1.08;letter-spacing:-.032em;font
   opacity:0;margin:0;
 }
 .scap[data-beat="0"]{opacity:1}                 /* no-JS: the plain caption */
+.copy-caption-mobile{display:none}
+@media (hover:none) and (pointer:coarse){
+  .copy-caption-desktop{display:none}
+  .copy-caption-mobile{display:block}
+  .storyfoot .ctafig{top:108px}
+}
 .story-next{position:absolute;left:50%;top:80px;translate:-50% 0;white-space:nowrap}
 .ctafig{position:absolute;left:50%;top:80px;translate:-50% 0;
   opacity:0;visibility:hidden;pointer-events:none;font-size:15px;
@@ -230,6 +239,7 @@ h1{font-size:clamp(32px,4.4vw,52px);line-height:1.08;letter-spacing:-.032em;font
 .post-copy:not([hidden]) ~ .mates{display:none}
 @media (max-width:720px){
   .story-next,.ctafig{top:100px}
+  .storyfoot .mates{display:none}
 }
 @media (prefers-reduced-motion:no-preference){
   .post-copy:not([hidden]){animation:post-copy-appear 180ms ease-out}
@@ -243,9 +253,9 @@ h1{font-size:clamp(32px,4.4vw,52px);line-height:1.08;letter-spacing:-.032em;font
 .mate svg{width:14px;height:16px}
 .mate i{font-style:normal;font-size:11px;font-weight:500;color:#fff;
   padding:2px 7px;border-radius:4px 10px 10px 10px;margin-top:10px;line-height:1.4}
-.mate.m1{left:calc(50% - 178px);top:40px;transform:translate(-18px,-12px)}
-.mate.m2{left:calc(50% + 122px);top:26px;transform:translate(20px,-10px)}
-.mate.m3{left:calc(50% + 96px);top:100px;transform:translate(16px,14px)}
+.mate.m1{left:calc(50% - 194px);top:80px;transform:translate(-18px,-12px)}
+.mate.m2{left:calc(50% + 146px);top:76px;transform:translate(20px,-10px)}
+.mate.m3{left:calc(50% + 96px);top:138px;transform:translate(16px,14px)}
 .mate.m1 svg{fill:#7B61FF}.mate.m1 i{background:#7B61FF}
 .mate.m2 svg{fill:#0FA958}.mate.m2 i{background:#0FA958}
 .mate.m3 svg{fill:#FF8577}.mate.m3 i{background:#FF8577}
@@ -536,7 +546,7 @@ h1{font-size:clamp(32px,4.4vw,52px);line-height:1.08;letter-spacing:-.032em;font
   padding:clamp(34px,6vw,62px) clamp(24px,5vw,64px);
   display:flex;flex-direction:column;align-items:center;gap:16px;width:100%;max-width:960px}
 .cta > img{border-radius:12px}
-.testimonials{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px;width:100%;max-width:960px}
+.testimonials{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:32px;width:100%;max-width:760px}
 .makernote{display:flex;flex-direction:column;gap:8px;min-width:0}
 .makernote blockquote{font-style:italic;color:var(--ink-2);font-size:17px;line-height:1.5}
 .makernote figcaption{margin-top:auto;min-height:44px;display:flex;align-items:center;justify-content:center;gap:8px;

@@ -106,7 +106,7 @@
   var copyAttempt = 0;
   var copyFailure = '';
   var storyStops = [0.26, 0.58, 0.86, 0.98];
-  var storyInvitations = ['Talked while recording?', 'And how did it feel?', 'Add your own take', 'Show your team'];
+  var storyInvitations = ['Talked while recording?', 'And how did it feel?', 'Then mark it up', 'Take it to Figma'];
   var nextBeat = 0;
   if (!extract || !board || !picks.length) return;
 
@@ -198,7 +198,7 @@
       screenNumbers:[6,7,8],
       feelings:[['Delighted',false],['Confused',true],['Meh',false]],
       notes:[['Voice · 0:12','“Oh, nice. That’s pretty cool.”'],
-             ['Voice · 0:38','“I’m not sure what this is about.”'],
+             ['Voice · 0:15','“I’m not sure what this is about.”'],
              ['Voice · 0:17','“Okay, last step.”']] },
     { slug:'out', alt:'The Outsiders',
       screenNumbers:[6,7,8],
@@ -211,7 +211,7 @@
       feelings:[['Confused',true],['Good',false],['Delighted',false]],
       notes:[['Voice · 0:06','“Where is the summary?”'],
              ['Voice · 0:22','“Okay, that one is clear.”'],
-             ['Voice · 0:44','“This breakdown is lovely.”']] }
+             ['Voice · 0:34','“This breakdown is lovely.”']] }
   ];
   var current = 0;
 
@@ -633,7 +633,7 @@
     glide(storyRange.start + destination * (storyRange.end - storyRange.start), 850, function () { sync(); });
   });
 
-  // "let’s take a closer look" delivers the breakdown: it drives to the end of the flight.
+  // "let’s break one down" delivers the breakdown: it drives to the end of the flight.
   // Each subsequent invitation advances that same scroll. Already broken? Rewind to
   // the start of the zone and run the flight again.
   button && button.addEventListener('click', function () {

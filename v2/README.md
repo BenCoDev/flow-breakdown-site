@@ -18,7 +18,7 @@ Deploy `index.html`, `styles.css`, `app.js`, `download.js`, and `assets/` to the
 
 **Current casing rule.** Short narrative headings and captions stay lowercase, while proper
 names keep their spelling: **Figma**, **Mac**, **Flow Breakdown**, and **App Breakdown**.
-Controls use sentence case: **How it works**, **Let’s take a closer look**, **Copy this example
+Controls use sentence case: **How it works**, **Let’s break one down**, **Copy this example
 to Figma**, **Download for Mac**, and **Send it to me**. Practical body paragraphs, dialog headings, helper sentences, status/error messages,
 and demo UI labels also use sentence case. Demo names retain their capitals: Mia, Sam, and Leo.
 The hero aside reads **imagine Jose’s phone.** / **recordings left to rot.**
@@ -26,26 +26,50 @@ App Breakdown is linked from Jose’s quote attribution below.
 
 ### Quotes
 
-The three closing quotes sit side by side on desktop and stack below 901px. Ben's attribution
-is **Ben, design engineer at noa**. The quote attributed to **Nico, designer at X** was
-drafted at the user's request; the visible draft label was subsequently removed at
-their request. It is not a verified statement from Nico. Jose's quote is transcribed verbatim from the message screenshot
-supplied by the user and signed **Jose, App Breakdown**: “I was literally right now
-taking 1000 screenshots of an app”.
+The two closing quotes appear side by side on desktop and stack below 901px.
+Jose leads with the exact message supplied by Ben: “I was literally right now taking
+1000 screenshots of an app”, signed **Jose, App Breakdown**, with the channel linked.
+Ben follows, signed **Ben, design engineer at noa**.
 
-All three quotes use 28px circular attribution portraits stored locally. Ben's
-`assets/ben-x.jpg` is his current [X profile photo](https://x.com/ben_cotte), downloaded
-unchanged on 22 September 2026 from `https://pbs.twimg.com/profile_images/1845034633576001550/DGgz7BwY_400x400.jpg`.
-It replaces the GitHub avatar initially used for his quote.
-Jose's quote reuses the existing `assets/jose.jpg` App Breakdown channel portrait
-already used in the hero credit.
+The invented Nico quote was removed on 22 September 2026 after Ben approved the
+narrative review. It can be replaced when actual feedback is available; no replacement
+quote has been invented. His unused `assets/nico.jpg` portrait is retained for that purpose,
+from [@nicoduc](https://x.com/nicoduc), not @nico_duc. Source:
+`https://pbs.twimg.com/profile_images/1923471320110739456/rqKkAjul.jpg`.
 
-Nico's portrait is stored at `assets/nico.jpg`,
-downloaded unchanged from [his X profile](https://x.com/nicoduc) on 22 September 2026.
-The matching designer account is **@nicoduc**, without the underscore in the original
-request. Source image: `https://pbs.twimg.com/profile_images/1923471320110739456/rqKkAjul.jpg`.
+Both visible quotes use 28px circular portraits. Ben's `assets/ben-x.jpg` is his current
+[X profile photo](https://x.com/ben_cotte), downloaded unchanged on 22 September 2026 from
+`https://pbs.twimg.com/profile_images/1845034633576001550/DGgz7BwY_400x400.jpg`.
+Jose's quote reuses `assets/jose.jpg`, the App Breakdown portrait in the hero card.
+
 All attribution rows reserve 44px so the signatures stay aligned and Jose’s App Breakdown
 channel link has a comfortable touch target. Only the channel name is underlined; its arrow is not.
+
+### Narrative revision · 22 September 2026
+
+The hero promise and Jose card stay unchanged. The supporting copy adds the screenshot-library
+use case; **Let’s break one down** starts the same scroll-driven example.
+
+| Scene | Caption | Next action |
+| --- | --- | --- |
+| Extracted screens | drop in a recording. get the flow, screen by screen. | Talked while recording? |
+| Voice | your words, next to the right screen. | And how did it feel? |
+| Reactions | your reactions, mapped across the flow. | Then mark it up |
+| Canvas | move things around. circle something. leave a thought. | Take it to Figma |
+| Desktop result | one board to talk through with your team. | Copy this example to Figma |
+| Mobile result | now your turn. / get Flow Breakdown for Mac. | Send it to me |
+
+Native touch/no-hover CSS switches the final caption with the same condition used by the
+email handoff. The mobile copy button sits lower to leave room for the two-line caption,
+including on larger touch tablets. On screens no wider than 360px and no taller than
+700px, the hero supporting text uses 15px so the complete phone invitation remains
+inside the first viewport. Teammate cursors sit beside/below the desktop copy control,
+clear of the caption; they are hidden below 721px. Desktop copy confirmation and the post-copy invitation
+remain unchanged. **Good to know** now labels the navigation link to the practical section.
+
+Sample voice timestamps are illustrative and now chronological within each displayed clip:
+RunBuds (0:21): 0:12, 0:15, 0:17; The Outsiders (1:14): 0:09, 0:31, 0:58;
+Oura (0:38): 0:06, 0:22, 0:34. They do not claim to be verified transcripts.
 
 ### Download CTA and mobile email handoff
 
@@ -82,8 +106,8 @@ nav rendered as a macOS menu bar (honest here, because it is a Mac app). Prompte
 borrowed.
 
 **Copy B refinement · 21 September 2026.** The hero restores the direct promise
-**screen recording in. Figma teardown out.**, supported by “that onboarding you just tried.
-that interaction you want to show your team.” The bevel and quiet **Let’s take a closer look**
+**screen recording in. Figma teardown out.**, supported by “that app you can’t find in a screenshot library.
+that flow you want to show your team.” The bevel and quiet **Let’s break one down**
 action lead into the demo. Download remains in the menu bar; there is no app icon or download
 button in the hero. The aside reads **imagine Jose’s phone.** / **recordings left to rot.**, alongside
 Jose’s portrait. This frames the camera roll as illustrative. The card is a non-clickable
@@ -94,10 +118,10 @@ row of Monzo, FotMob, and Liven below. The third row is removed. The bevel is 0.
 width, with the fade beginning at 60% so the entire selectable row stays opaque and the
 second row dissolves. The opening fills the first viewport: the promise centres in the
 remaining space, seating the phone and invitation at the bottom. At 1472×816, the phone
-starts at 428px and the invitation ends at 800px. The App Breakdown credit is a small
-frosted card with a 4° clockwise tilt resting across the upper-right rim, with the entire card linking to the
-inspiration source. A 32px circular portrait sits beside the text with a 10px gap; the
-card stays 54px high and grows to 212px wide. Its bottom edge clears the phone notch.
+starts at 428px and the invitation ends at 800px. The Jose story annotation is a small
+frosted card with a 4° clockwise tilt resting across the upper-right rim. The
+App Breakdown channel is linked from his quote below. A 32px circular portrait sits beside the text with a 10px gap; the
+card stays 54px high and sizes to its two lines of text. Its bottom edge clears the phone notch.
 Removing its separate mobile space lowers the headline by 24px at
 390×844; the phone still starts at 549px and the invitation ends at 828px. The card uses
 local 24px blur, a 38%–20% translucent gradient, fine static grain, and a subtle border and shadow. Short screens
@@ -170,9 +194,9 @@ navigation. Filled buttons are reserved for copying the example and downloading 
 The hero promise stays above the first asset. This motion is implemented on the live
 page; the Figma prototype's motion is unchanged.
 
-The hero's **Let’s take a closer look ↓** and the continuation beneath each caption use
+The hero's **Let’s break one down ↓** and the continuation beneath each caption use
 quiet text styling. The same continuation button changes with scroll position:
-**Talked while recording? → And how did it feel? → Add your own take → Show your team**.
+**Talked while recording? → And how did it feel? → Then mark it up → Take it to Figma**.
 Each click moves scrollY through the existing driver, stopping at story progress
 `q = .26, .58, .86, .98`; manual scrolling and scrolling back produce the same states.
 The final stop exposes **Copy this example to Figma**. No step counter or second
@@ -358,7 +382,7 @@ purple/green/coral) fade in around the button and idle with slow drifts, waiting
 Hover-gated (`hover:hover and pointer:fine`), stilled under reduced motion, `aria-hidden`. The
 names and colours are invented; change them in `index.html` if anyone real objects.
 
-**“Let’s take a closer look” DRIVES the scroll.** One decisive **ease-out** glide (cubic, `GLIDE_MS` =
+**“Let’s break one down” DRIVES the scroll.** One decisive **ease-out** glide (cubic, `GLIDE_MS` =
 1100 ms full-range; partial runs scale down) from wherever the page is to the end of the zone:
 fast off the line — the tap wants the payoff — then decelerating, so the chips and notes land in
 the slow tail. (A linear drive at the timeline's own 2120 ms tempo was tried first and read as too
