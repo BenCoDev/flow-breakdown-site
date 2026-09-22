@@ -63,13 +63,15 @@ action lead into the demo. Download remains in the menu bar; there is no app ico
 button in the hero. The aside restores **a roll like Jose’s.**, with a quieter App Breakdown
 inspiration credit and no portrait or claim that the library belongs to Jose.
 
-**Compact hero.** Only the three selectable recordings remain in the phone; the two decorative
-rows are removed. The bevel is 0.72 times its width, with the fade beginning at 80% so the
-entire selectable row stays opaque. A viewport-height opening wrapper puts the promise lower
+**Compact hero.** The phone has two rows: three selectable recordings on top and a decorative
+row of Monzo, FotMob, and Liven below. The third row is removed. The bevel is 0.94 times its
+width, with the fade beginning at 60% so the entire selectable row stays opaque and the
+second row dissolves. A viewport-height opening wrapper puts the promise lower
 on roomy screens and leaves 36–56px before the phone, without pushing the phone down into
 the next section. At 1472×816, the promise starts at 201px and the phone at 373px (49px gap).
 The annotation follows the row on desktop and sits below it on narrow screens. All three
-recordings and the extraction were checked; the invitation remains visible at 320×640.
+recordings and the extraction were checked; reduced top padding and a 24px gap on short
+phones keep the invitation visible at 320×640. The matching Figma hero also has two rows.
 
 The redundant **three steps, then it’s a board** band is removed. The menu's **How it works**
 link now points to `#zone`; the demo leads directly to practical questions about local processing,
@@ -182,7 +184,7 @@ once, and the scroll position drives it between 0 (folded into the selected thum
 end state). That means the page is true with no JS,
 before hydration, and to a crawler — the animation is an enhancement, never a prerequisite.
 
-**The roll is a real picker.** Its only row contains three `<button>`s with
+**The roll is a real picker.** Its top row contains three `<button>`s with
 `aria-pressed`. Each is hard-wired to its own three screens, feelings and voice notes
 (`RECORDINGS` in `app.js`); picking one swaps all of it and re-renders at the current scroll
 state. The FLIP origin follows the selection, so the
