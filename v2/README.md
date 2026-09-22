@@ -129,10 +129,11 @@ window but vanishes on this light canvas, so it mixes `--surface` 92% → 62% in
 The walkthrough reads **asset → narrative → next step**. Narrative captions use 16px regular
 primary text; continuation links use 14px regular secondary text, with a small arrow and an
 invisible 44px target. Hover adds contrast and underlines only `.narrative-label`; the separate
-`.narrative-arrow` never receives an underline. Four identical arrow faces form a small
-3D wheel: each turns downward out of a clipped window as the next enters from above.
-A full revolution takes 4.8 seconds, with an ease-in-out turn every 1.2 seconds and a
-seamless reset. An intersection observer runs it only while the link is at least 25%
+`.narrative-arrow` never receives an underline. Twelve identical arrow faces form a larger
+3D wheel with a 2.6em radius and 400px perspective: each turns downward out of a
+clipped window as the next enters from above. Each 30-degree ease-in-out turn takes
+1.2 seconds, and the identical faces hide the reset. The larger radius keeps the
+visible arrows closer to facing forward, reducing their squash during the handoff. An intersection observer runs it only while the link is at least 25%
 visible, on desktop and mobile. Reduced motion keeps one static arrow. This applies
 to the hero invitation and story continuation without changing their hit areas or
 navigation. Filled buttons are reserved for copying the example and downloading the app.
