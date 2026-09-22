@@ -34,8 +34,9 @@ supplied by the user and signed **Jose, App Breakdown**: “I was literally righ
 taking 1000 screenshots of an app”.
 
 All three quotes use 28px circular attribution portraits stored locally. Ben's
-`assets/ben.png` is his public [GitHub avatar](https://github.com/BenCoDev), downloaded
-unchanged on 22 September 2026 from `https://avatars.githubusercontent.com/u/4339031?v=4`.
+`assets/ben-x.jpg` is his current [X profile photo](https://x.com/ben_cotte), downloaded
+unchanged on 22 September 2026 from `https://pbs.twimg.com/profile_images/1845034633576001550/DGgz7BwY_400x400.jpg`.
+It replaces the GitHub avatar initially used for his quote.
 Jose's quote reuses the existing `assets/jose.jpg` App Breakdown channel portrait
 already used in the hero credit.
 
