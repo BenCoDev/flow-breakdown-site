@@ -24,6 +24,13 @@ my Mac**. Practical body paragraphs, dialog headings, helper sentences, status/e
 and demo UI labels also use sentence case. Demo names retain their capitals: Mia, Sam, and Leo.
 The inspiration credit remains the narrative aside **inspired by App Breakdown ↗**.
 
+### Quotes
+
+The closing quotes sit side by side on desktop and stack on mobile. Ben's attribution
+is **Ben, design engineer at noa**. The quote attributed to **Nico, designer at X** was
+drafted at the user's request and is visibly marked **Draft quote**; it is not a verified
+statement from Nico.
+
 ### Download CTA and mobile email handoff
 
 `download.js` owns the download CTAs independently of animation/reduced motion.
