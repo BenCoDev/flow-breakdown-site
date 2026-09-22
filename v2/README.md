@@ -193,7 +193,11 @@ before hydration, and to a crawler — the animation is an enhancement, never a 
 **The roll is a real picker.** Its top row contains three `<button>`s with
 `aria-pressed`. Each is hard-wired to its own three screens, feelings and voice notes
 (`RECORDINGS` in `app.js`); picking one swaps all of it and re-renders at the current scroll
-state. The FLIP origin follows the selection, so the
+position. Each recording also stores `screenNumbers`: the highlighted screens are **6, 7,
+and 8** in its full illustrated stack, after five preceding screenshots. These positions
+are used in visible labels, image descriptions, and the copied Figma SVG; they describe
+the landing-page stack, not an independently verified original recording or Mobbin sequence.
+The FLIP origin follows the selection, so the
 cards fly out of whichever cell is picked — there is no fixed `id` for it. **If you restructure the roll markup, keep `.cell.pick` and the `img` inside it**: the
 script guards on `picks.length` and returns silently if they are missing, which looks exactly like
 "the animation is broken" with a clean console.

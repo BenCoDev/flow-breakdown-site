@@ -180,18 +180,23 @@
     return '<svg class="face" viewBox="0 0 20 20" aria-hidden="true">' + faceParts(FEELINGS[name], FEELINGS[name].ink) + '</svg>';
   }
 
+  // One-based positions in each full landing-page stack, including XTRAS before
+  // the highlighted trio. Keep these app-specific values when changing a stack.
   var RECORDINGS = [
     { slug:'card', alt:'RunBuds',
+      screenNumbers:[6,7,8],
       feelings:[['Delighted',false],['Confused',true],['Meh',false]],
       notes:[['Voice · 0:12','“Oh, nice. That’s pretty cool.”'],
              ['Voice · 0:38','“I’m not sure what this is about.”'],
              ['Voice · 0:17','“Okay, last step.”']] },
     { slug:'out', alt:'The Outsiders',
+      screenNumbers:[6,7,8],
       feelings:[['Good',false],['Delighted',false],['Meh',true]],
       notes:[['Voice · 0:09','“That chart is doing a lot of work.”'],
              ['Voice · 0:31','“The year view is the good bit.”'],
              ['Voice · 0:58','“Not sure I need this tab.”']] },
     { slug:'our', alt:'Oura',
+      screenNumbers:[6,7,8],
       feelings:[['Confused',true],['Good',false],['Delighted',false]],
       notes:[['Voice · 0:06','“Where is the summary?”'],
              ['Voice · 0:22','“Okay, that one is clear.”'],
@@ -211,7 +216,8 @@
       var img = c.querySelector('img');
       img.src = 'assets/' + r.slug + (n + 1) + '.jpg';
       img.srcset = 'assets/' + r.slug + (n + 1) + '.jpg 1x, assets/' + r.slug + (n + 1) + '@2x.jpg 2x';
-      img.alt = 'Screen ' + (n + 1) + ' of the ' + r.alt + ' recording';
+      img.alt = r.alt + ' — Screen ' + r.screenNumbers[n];
+      labels[n].textContent = 'Screen ' + r.screenNumbers[n];
     });
     chips.forEach(function (ch, n) {
       var f = r.feelings[n];
@@ -666,7 +672,7 @@
         s.push('<rect x="' + (x + 54) + '" y="' + (6 + off) + '" width="92" height="24" rx="12" fill="#FFFFFF" stroke="#D9D9DE"' + (f[1] ? ' stroke-dasharray="4 3"' : '') + '/>');
         s.push('<g transform="translate(' + (x + 58) + ' ' + (8 + off) + ')">' + faceParts(fd, fd.inkHex) + '</g>');
         s.push('<text x="' + (x + 82) + '" y="' + (22 + off) + '" font-family="SF Pro Text, Inter, sans-serif" font-size="13" fill="#1C1C1E">' + esc(f[0]) + '</text>');
-        s.push('<text x="' + x + '" y="58" font-family="SF Pro Text, Inter, sans-serif" font-size="12" fill="#8E8E93">Screen ' + (i + 1) + '</text>');
+        s.push('<text x="' + x + '" y="58" font-family="SF Pro Text, Inter, sans-serif" font-size="12" fill="#8E8E93">Screen ' + r.screenNumbers[i] + '</text>');
         if (uris[i]) s.push('<image x="' + x + '" y="66" width="200" height="433" clip-path="url(#scr' + i + ')" href="' + uris[i] + '"/>');
         s.push('<rect x="' + x + '" y="66" width="200" height="433" rx="19" stroke="#00000022"/>');
         s.push('<rect x="' + (x - 9) + '" y="511" width="236" height="42" rx="9" fill="#FFFFFF" stroke="#E3E3E8"/>');
