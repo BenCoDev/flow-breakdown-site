@@ -67,11 +67,13 @@ inspiration credit and no portrait or claim that the library belongs to Jose.
 row of Monzo, FotMob, and Liven below. The third row is removed. The bevel is 0.94 times its
 width, with the fade beginning at 60% so the entire selectable row stays opaque and the
 second row dissolves. The opening fills the first viewport: the promise centres in the
-remaining space, seating the phone and invitation at the bottom. At 1472×816, the headline
-starts at 228px, the phone at 428px, and the invitation ends at 800px. The App Breakdown
-credit sits just outside the upper-right corner on desktop; narrow screens reserve 48px
-above the phone and align the credit to its right edge. At 390×844 the phone starts at
-549px and the invitation ends at 828px. The first row stays before the fade at every
+remaining space, seating the phone and invitation at the bottom. At 1472×816, the phone
+starts at 428px and the invitation ends at 800px. The App Breakdown credit is a small
+frosted card overlapping the upper-right rim by 8px, with the entire card linking to the
+inspiration source. Removing its separate mobile space lowers the headline by 24px at
+390×844; the phone still starts at 549px and the invitation ends at 828px. The card uses
+local 12px blur, a translucent surface, and a subtle border and shadow. Short screens
+reserve enough space between the supporting copy and card. The first row stays before the fade at every
 checked size, including 320×640, with no horizontal overflow. The extraction still runs
 from the selected thumbnail. The matching Figma hero uses the same bottom-seated layout.
 
