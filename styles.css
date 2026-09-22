@@ -97,7 +97,7 @@ button,a{touch-action:manipulation}
   font-size:13px;
 }
 .menus{display:flex;align-items:center;gap:18px;min-width:0}
-.menus .mark{border-radius:3px;flex:none}
+.menus .mark{width:36px;height:36px;max-width:none;object-fit:contain;flex:none;margin-right:-10px}
 .menus .app{font-weight:600;white-space:nowrap}
 .menus a{color:var(--ink-2);text-decoration:none}
 .status{display:flex;align-items:center;gap:14px;white-space:nowrap}
@@ -117,8 +117,18 @@ button,a{touch-action:manipulation}
   .store-button{transition:background-color .16s ease,border-color .16s ease,transform .16s ease}
 }
 @media (max-width:900px){.status .req{display:none}}
-@media (max-width:640px){ .menus a{display:none} }
-@media (max-width:380px){.menubar{padding-inline:12px;gap:8px}.menus{gap:8px}.menus .mark{display:none}}
+@media (max-width:640px){
+  .menus{gap:10px}
+  .menus .mark{width:32px;height:32px;margin-right:0}
+  .menus a{display:none}
+}
+@media (max-width:380px){
+  .menubar{padding-inline:10px;gap:8px}
+  .menus{gap:6px}
+  .menus .app{font-size:12px}
+  .menubar .store-button{font-size:12px}
+  .menubar .store-icon{width:28px;height:28px}
+}
 
 /* ── shared ───────────────────────────────── */
 .btn{
