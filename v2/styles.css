@@ -540,7 +540,9 @@ h1{font-size:clamp(32px,4.4vw,52px);line-height:1.08;letter-spacing:-.032em;font
 .testimonials{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px;width:100%;max-width:960px}
 .makernote{display:flex;flex-direction:column;gap:8px;min-width:0}
 .makernote blockquote{font-style:italic;color:var(--ink-2);font-size:17px;line-height:1.5}
-.makernote figcaption{margin-top:auto;font-size:14px;color:var(--ink-3)}
+.makernote figcaption{margin-top:auto;min-height:32px;display:flex;align-items:center;justify-content:center;gap:8px;
+  font-size:14px;color:var(--ink-3)}
+.quote-avatar{width:28px;height:28px;flex:none;border-radius:50%;object-fit:cover;border:1px solid var(--line)}
 @media (max-width:900px){.testimonials{grid-template-columns:1fr;max-width:620px}}
 
 footer{max-width:1200px;margin:0 auto;padding:64px var(--pad) 72px;

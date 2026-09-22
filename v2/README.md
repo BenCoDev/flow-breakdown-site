@@ -33,6 +33,12 @@ statement from Nico. Jose's quote is transcribed verbatim from the message scree
 supplied by the user and signed **Jose, App Breakdown**: “I was literally right now
 taking 1000 screenshots of an app”.
 
+Nico's 28px circular attribution portrait is stored locally at `assets/nico.jpg`,
+downloaded unchanged from [his X profile](https://x.com/nicoduc) on 22 September 2026.
+The matching designer account is **@nicoduc**, without the underscore in the original
+request. Source image: `https://pbs.twimg.com/profile_images/1923471320110739456/rqKkAjul.jpg`.
+All attribution rows reserve 32px so the signatures stay aligned.
+
 ### Download CTA and mobile email handoff
 
 `download.js` owns the download CTAs independently of animation/reduced motion.
