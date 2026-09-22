@@ -33,7 +33,13 @@ their request. It is not a verified statement from Nico. Jose's quote is transcr
 supplied by the user and signed **Jose, App Breakdown**: “I was literally right now
 taking 1000 screenshots of an app”.
 
-Nico's 28px circular attribution portrait is stored locally at `assets/nico.jpg`,
+All three quotes use 28px circular attribution portraits stored locally. Ben's
+`assets/ben.png` is his public [GitHub avatar](https://github.com/BenCoDev), downloaded
+unchanged on 22 September 2026 from `https://avatars.githubusercontent.com/u/4339031?v=4`.
+Jose's quote reuses the existing `assets/jose.jpg` App Breakdown channel portrait
+already used in the hero credit.
+
+Nico's portrait is stored at `assets/nico.jpg`,
 downloaded unchanged from [his X profile](https://x.com/nicoduc) on 22 September 2026.
 The matching designer account is **@nicoduc**, without the underscore in the original
 request. Source image: `https://pbs.twimg.com/profile_images/1923471320110739456/rqKkAjul.jpg`.
