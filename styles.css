@@ -137,14 +137,30 @@ button,a{touch-action:manipulation}
   min-height:44px;padding:10px 12px;border:0;background:none;color:var(--ink-2);
   font:inherit;font-size:14px;font-weight:400;cursor:pointer;text-decoration:none}
 .narrative-link[hidden]{display:none}
-.narrative-arrow{display:inline-block;color:var(--ink-2);text-decoration:none}
+.narrative-arrow{position:relative;display:block;flex:none;width:1em;height:1.4em;
+  color:var(--ink-2);text-decoration:none;overflow:hidden;perspective:100px}
+.narrative-arrow-wheel{position:absolute;inset:0;transform-style:preserve-3d;
+  transform:translateZ(-.7em) rotateX(0deg)}
+.narrative-arrow-face{position:absolute;inset:0;display:grid;place-items:center;
+  line-height:1;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  transform:rotateX(0deg) translateZ(.7em)}
+.narrative-arrow-face:nth-child(2){transform:rotateX(90deg) translateZ(.7em)}
+.narrative-arrow-face:nth-child(3){transform:rotateX(180deg) translateZ(.7em)}
+.narrative-arrow-face:nth-child(4){transform:rotateX(270deg) translateZ(.7em)}
 @media (hover:hover) and (pointer:fine){
   .narrative-link:hover{color:var(--ink)}
   .narrative-link:hover > .narrative-label{text-decoration:underline;text-underline-offset:4px}
 }
-@media (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
-  .narrative-link:hover > .narrative-arrow{animation:narrative-arrow-bob 1.2s ease-in-out infinite}
-  @keyframes narrative-arrow-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(3px)}}
+@media (prefers-reduced-motion:no-preference){
+  .narrative-link.arrow-visible .narrative-arrow-wheel{
+    animation:narrative-arrow-roll 4.8s cubic-bezier(.65,0,.35,1) infinite}
+  @keyframes narrative-arrow-roll{
+    0%{transform:translateZ(-.7em) rotateX(0deg)}
+    25%{transform:translateZ(-.7em) rotateX(-90deg)}
+    50%{transform:translateZ(-.7em) rotateX(-180deg)}
+    75%{transform:translateZ(-.7em) rotateX(-270deg)}
+    100%{transform:translateZ(-.7em) rotateX(-360deg)}
+  }
 }
 .fine{font-size:13px;color:var(--ink-3)}
 .lede{color:var(--ink-2);max-width:62ch}
@@ -586,7 +602,7 @@ footer a{text-decoration:none}
   html{scroll-behavior:auto}
   .mark,.mark::after{transition:none}
   .caret path{animation:none}
-  .narrative-arrow{animation:none;transform:none}
+  .narrative-arrow-wheel{animation:none;transform:translateZ(-.7em) rotateX(0deg)}
   .mate .p{animation:none}
   .zone{height:auto}
   .storyzone{padding-bottom:0}

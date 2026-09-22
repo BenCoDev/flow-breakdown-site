@@ -13,6 +13,17 @@
   'use strict';
 
   var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Identical faces roll downward like an odometer. Run only for visible links.
+  if (!reduced && 'IntersectionObserver' in window) {
+    var arrowObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        entry.target.classList.toggle('arrow-visible', entry.isIntersecting && entry.intersectionRatio >= 0.25);
+      });
+    }, { threshold: 0.25 });
+    document.querySelectorAll('.narrative-link').forEach(function (link) {
+      arrowObserver.observe(link);
+    });
+  }
   if (reduced) {
     // The end state is already correct and nothing animates — but the button must
     // not be dead: it takes you to the board, with no motion.
