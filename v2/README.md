@@ -19,10 +19,10 @@ Deploy `index.html`, `styles.css`, `app.js`, `download.js`, and `assets/` to the
 **Current casing rule.** Short narrative headings and captions stay lowercase, while proper
 names keep their spelling: **Figma**, **Mac**, **Flow Breakdown**, and **App Breakdown**.
 Controls use sentence case: **How it works**, **Let’s take a closer look**, **Copy this example
-to Figma**, **Download for Mac**, and **Send a link to
-my Mac**. Practical body paragraphs, dialog headings, helper sentences, status/error messages,
+to Figma**, **Download for Mac**, and **Send it to me**. Practical body paragraphs, dialog headings, helper sentences, status/error messages,
 and demo UI labels also use sentence case. Demo names retain their capitals: Mia, Sam, and Leo.
-The inspiration credit remains the narrative aside **inspired by App Breakdown ↗**.
+The hero aside reads **imagine Jose’s phone.** / **recordings left to rot.**
+App Breakdown is linked from Jose’s quote attribution below.
 
 ### Quotes
 
@@ -44,7 +44,8 @@ Nico's portrait is stored at `assets/nico.jpg`,
 downloaded unchanged from [his X profile](https://x.com/nicoduc) on 22 September 2026.
 The matching designer account is **@nicoduc**, without the underscore in the original
 request. Source image: `https://pbs.twimg.com/profile_images/1923471320110739456/rqKkAjul.jpg`.
-All attribution rows reserve 32px so the signatures stay aligned.
+All attribution rows reserve 44px so the signatures stay aligned and Jose’s App Breakdown
+channel link has a comfortable touch target. Only the channel name is underlined; its arrow is not.
 
 ### Download CTA and mobile email handoff
 
@@ -84,8 +85,9 @@ borrowed.
 **screen recording in. Figma teardown out.**, supported by “that onboarding you just tried.
 that interaction you want to show your team.” The bevel and quiet **Let’s take a closer look**
 action lead into the demo. Download remains in the menu bar; there is no app icon or download
-button in the hero. The aside restores **a roll like Jose’s.**, with a quieter App Breakdown
-inspiration credit and Jose’s portrait, without claiming that the library belongs to him.
+button in the hero. The aside reads **imagine Jose’s phone.** / **recordings left to rot.**, alongside
+Jose’s portrait. This frames the camera roll as illustrative. The card is a non-clickable
+story annotation; the App Breakdown channel link sits in Jose’s quote attribution.
 
 **Compact hero.** The phone has two rows: three selectable recordings on top and a decorative
 row of Monzo, FotMob, and Liven below. The third row is removed. The bevel is 0.94 times its
@@ -143,8 +145,9 @@ the app icon in the navigation.
 
 The closing headline is **next time, don’t leave it in your camera roll.** with no supporting lede.
 
-The credit under the roll is an **aside**: SF Pro Rounded (`ui-rounded`), seated in the tail of the
-bevel's dissolve where nothing shows through. Higher up it lands on photographs and is unreadable.
+The hero story card is an **aside** in SF Pro Rounded (`ui-rounded`), overlapping the
+phone’s upper-right rim. It keeps the clockwise angle and frosted glass treatment,
+with two short lines beside Jose’s portrait and room for the notch to remain visible.
 
 The bevel's wash is the app's recipe with one change: `white.opacity(.4 → .18)` reads on a frosted
 window but vanishes on this light canvas, so it mixes `--surface` 92% → 62% instead.
@@ -441,7 +444,7 @@ branch, no play-once state machine.
       **the spelling** — "Jose" comes only from Ben; the channel shows no personal name anywhere,
       so it could not be verified; and **the photo** — it is his YouTube avatar, captured from the
       channel page. If he has a preferred headshot, swap `assets/jose.jpg`.
-      The hero still reads *"a roll like Jose's"*; the screens shown are not his actual recordings.
+      The hero reads *"imagine Jose’s phone."*; the screens shown are not his actual recordings.
       The closing section now also includes his message about taking 1000 screenshots,
       supplied verbatim by Ben on 22 September 2026.
 - [ ] **Mobile is untested on a device.** The breakpoint could not be exercised in this environment —
