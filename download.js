@@ -59,11 +59,6 @@
       }
     });
   });
-  document.querySelectorAll('[data-email-link]').forEach(function (button) {
-    button.addEventListener('click', function () {
-      openEmail(button);
-    });
-  });
   const exampleLink = document.getElementById('ctafig');
   if (exampleLink) exampleLink.addEventListener('click', function (event) {
     if (!mobile.matches) return;

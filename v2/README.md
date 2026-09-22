@@ -78,8 +78,8 @@ Touch devices without hover use the Apple Mail icon and **Send it to me** on
 the main CTAs, including the example handoff and compact header.
 These actions open an email dialog and restore focus to the button that opened it.
 The same live media query covers phones and larger touch tablets. Desktop keeps the
-App Store/Figma icons and download/copy actions, even in narrow windows; the close
-section also offers an email link on desktop.
+App Store/Figma icons and download/copy actions, even in narrow windows.
+The email handoff is mobile-only; there is no separate email link on desktop.
 
 **The live App Store URL is connected:** all three download links (header, post-copy,
 and closing CTA) open [Flow Breakdown on the Mac App Store](https://apps.apple.com/us/app/flow-breakdown/id6813535098).
