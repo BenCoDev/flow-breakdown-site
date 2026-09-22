@@ -61,7 +61,7 @@ borrowed.
 that interaction you want to show your team.” The bevel and quiet **Let’s take a closer look**
 action lead into the demo. Download remains in the menu bar; there is no app icon or download
 button in the hero. The aside restores **a roll like Jose’s.**, with a quieter App Breakdown
-inspiration credit and no portrait or claim that the library belongs to Jose.
+inspiration credit and Jose’s portrait, without claiming that the library belongs to him.
 
 **Compact hero.** The phone has two rows: three selectable recordings on top and a decorative
 row of Monzo, FotMob, and Liven below. The third row is removed. The bevel is 0.94 times its
@@ -70,7 +70,8 @@ second row dissolves. The opening fills the first viewport: the promise centres 
 remaining space, seating the phone and invitation at the bottom. At 1472×816, the phone
 starts at 428px and the invitation ends at 800px. The App Breakdown credit is a small
 frosted card with a 2° counterclockwise tilt overlapping the upper-right rim by about 20px, with the entire card linking to the
-inspiration source. Removing its separate mobile space lowers the headline by 24px at
+inspiration source. A 32px circular portrait sits beside the text with a 10px gap; the
+card stays 54px high and grows to 212px wide. Removing its separate mobile space lowers the headline by 24px at
 390×844; the phone still starts at 549px and the invitation ends at 828px. The card uses
 local 20px blur, a 48% translucent surface, and a subtle border and shadow. Short screens
 reserve enough space between the supporting copy and card. The first row stays before the fade at every
