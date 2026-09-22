@@ -330,7 +330,7 @@ h1{font-size:clamp(32px,4.4vw,52px);line-height:1.08;letter-spacing:-.032em;font
 .whose{
   position:absolute;z-index:2;top:-56px;
   right:max(20px,calc(50% - clamp(140px,13.5vw,190px) - 24px));
-  rotate:-4deg;
+  rotate:4deg;
   font-family:var(--round);border-radius:14px;
   background:linear-gradient(155deg,
     color-mix(in srgb,var(--surface) 38%,transparent),
