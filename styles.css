@@ -179,7 +179,7 @@ h1{font-size:clamp(32px,4.4vw,52px);line-height:1.08;letter-spacing:-.032em;font
 }
 @media (max-height:700px){
   /* The copy needs clear space above the card when there is little flex room. */
-  .zone{margin-top:52px}
+  .zone{margin-top:70px}
 }
 
 /* ── the story: a sticky stage inside a tall zone.
@@ -328,7 +328,7 @@ h1{font-size:clamp(32px,4.4vw,52px);line-height:1.08;letter-spacing:-.032em;font
 /* A small attribution card sits across the phone's upper-right rim. Keeping it
    outside the bevel avoids masking the link; the recording title stays clear. */
 .whose{
-  position:absolute;z-index:2;top:-34px;
+  position:absolute;z-index:2;top:-52px;
   right:max(20px,calc(50% - clamp(140px,13.5vw,190px) - 24px));
   rotate:-2deg;
   font-family:var(--round);border-radius:14px;

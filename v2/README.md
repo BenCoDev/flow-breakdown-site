@@ -69,9 +69,10 @@ width, with the fade beginning at 60% so the entire selectable row stays opaque 
 second row dissolves. The opening fills the first viewport: the promise centres in the
 remaining space, seating the phone and invitation at the bottom. At 1472×816, the phone
 starts at 428px and the invitation ends at 800px. The App Breakdown credit is a small
-frosted card with a 2° counterclockwise tilt overlapping the upper-right rim by about 20px, with the entire card linking to the
+frosted card with a 2° counterclockwise tilt resting across the upper-right rim, with the entire card linking to the
 inspiration source. A 32px circular portrait sits beside the text with a 10px gap; the
-card stays 54px high and grows to 212px wide. Removing its separate mobile space lowers the headline by 24px at
+card stays 54px high and grows to 212px wide. Its bottom edge clears the phone notch.
+Removing its separate mobile space lowers the headline by 24px at
 390×844; the phone still starts at 549px and the invitation ends at 828px. The card uses
 local 20px blur, a 48% translucent surface, and a subtle border and shadow. Short screens
 reserve enough space between the supporting copy and card. The first row stays before the fade at every
