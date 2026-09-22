@@ -66,12 +66,14 @@ inspiration credit and no portrait or claim that the library belongs to Jose.
 **Compact hero.** The phone has two rows: three selectable recordings on top and a decorative
 row of Monzo, FotMob, and Liven below. The third row is removed. The bevel is 0.94 times its
 width, with the fade beginning at 60% so the entire selectable row stays opaque and the
-second row dissolves. A viewport-height opening wrapper puts the promise lower
-on roomy screens and leaves 36–56px before the phone, without pushing the phone down into
-the next section. At 1472×816, the promise starts at 201px and the phone at 373px (49px gap).
-The annotation follows the row on desktop and sits below it on narrow screens. All three
-recordings and the extraction were checked; reduced top padding and a 24px gap on short
-phones keep the invitation visible at 320×640. The matching Figma hero also has two rows.
+second row dissolves. The opening fills the first viewport: the promise centres in the
+remaining space, seating the phone and invitation at the bottom. At 1472×816, the headline
+starts at 228px, the phone at 428px, and the invitation ends at 800px. The App Breakdown
+credit sits just outside the upper-right corner on desktop; narrow screens reserve 48px
+above the phone and align the credit to its right edge. At 390×844 the phone starts at
+549px and the invitation ends at 828px. The first row stays before the fade at every
+checked size, including 320×640, with no horizontal overflow. The extraction still runs
+from the selected thumbnail. The matching Figma hero uses the same bottom-seated layout.
 
 The redundant **three steps, then it’s a board** band is removed. The menu's **How it works**
 link now points to `#zone`; the demo leads directly to practical questions about local processing,

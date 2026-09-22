@@ -152,20 +152,21 @@ h1,h2,h3{text-wrap:balance;letter-spacing:-.02em;font-weight:500}
 
 /* ── hero ───────────────────────────────── */
 .hero-opening{
+  display:flex;flex-direction:column;
   min-height:calc(100svh - var(--header-height));
   padding-top:clamp(52px,calc(100svh - 680px),148px);
-  padding-bottom:36px;
+  padding-bottom:16px;
 }
-.promise{display:flex;flex-direction:column;align-items:center;gap:15px;text-align:center;
+.promise{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:15px;text-align:center;width:100%;
   max-width:1200px;margin:0 auto;padding:0 var(--pad)}
 h1{font-size:clamp(32px,4.4vw,52px);line-height:1.08;letter-spacing:-.032em;font-weight:500}
 .hero-intro{max-width:48ch;color:var(--ink-2);font-size:clamp(16px,1.5vw,18px);
   line-height:1.45;text-wrap:balance}
 
-/* The opening holds copy, the selectable row, and its invitation as one group.
-   Its wrapper keeps the story below the fold without adding space above the phone. */
+/* The promise takes the remaining opening space, seating the phone and its
+   invitation at the bottom of the viewport without absolute positioning. */
 .zone{
-  position:relative;margin-top:clamp(36px,6svh,56px);
+  position:relative;flex:none;margin-top:clamp(36px,6svh,56px);
   display:flex;flex-direction:column;justify-content:center;
 }
 .pin{display:flex;justify-content:center}
@@ -313,6 +314,7 @@ h1{font-size:clamp(32px,4.4vw,52px);line-height:1.08;letter-spacing:-.032em;font
 .canvasmode .card{cursor:grab;touch-action:none}
 .canvasmode .card:active{cursor:grabbing}
 .extract{
+  position:relative;
   display:flex;flex-direction:column;align-items:center;gap:clamp(12px,1.6vh,18px);
   width:100%;max-width:1200px;margin:0 auto;padding:0 var(--pad);
 }
@@ -324,23 +326,23 @@ h1{font-size:clamp(32px,4.4vw,52px);line-height:1.08;letter-spacing:-.032em;font
 .whose{
   display:flex;align-items:center;gap:10px;max-width:min(100%,460px);
   font-family:var(--round);
-  margin-top:-34px;                 /* seated in the tail of the bevel's dissolve */
-  position:relative;z-index:2;
+  position:absolute;z-index:2;top:0;
+  right:calc(50% - clamp(140px,13.5vw,190px));
 }
-/* Desktop: a side annotation beside the phone, not a line under it — centered it
-   collides with the roll's tail and crowds the button. */
+/* Keep the credit above the phone on narrow screens; wide screens have room
+   for it just beyond the upper-right corner. It never overlaps a thumbnail. */
+@media (max-width:959px){
+  .extract{padding-top:48px}
+}
+#breakdown{margin-top:-42px;position:relative;z-index:3}
 @media (min-width:960px){
-  .extract{position:relative}
   .whose{
-    position:absolute;margin-top:0;
     left:calc(50% + clamp(140px,13.5vw,190px) + 32px);
-    top:calc(clamp(280px,27vw,380px) * 0.38);
+    right:auto;top:-18px;
     max-width:236px;
     align-items:flex-start;
   }
   .whose b{white-space:normal}
-  /* the button sits ON the bevel's dissolving tail */
-  #breakdown{margin-top:-42px;position:relative;z-index:3}
 }
 .whose img{width:32px;height:32px;border-radius:50%;flex:none;
   border:1px solid rgba(0,0,0,.08);object-fit:cover}
