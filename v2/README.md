@@ -248,6 +248,14 @@ the whole flight, long enough to have real texture.
 
 ## The story (beats 2–5)
 
+**Mobile emotion stickers.** At widths up to 720px, pills are 22px high with 11px text,
+14px faces, and tighter padding. The feelings step no longer enlarges them by 1.45×,
+reducing their displayed footprint by about 60%. Their centers are fitted inside the
+viewport with space for the later canvas scatter, even when the screenshot strip bleeds
+off-screen. CSS owns centering; the animation only adds pixel offsets, fixing the prior
+double left shift. The dashed emotion line uses the same cached centers and translations.
+Desktop pill sizes and the copied Figma artwork retain their existing proportions.
+
 After the flight, the page keeps going — and it **accretes**: the flight delivers the FRAMES
 ONLY, then each beat adds its own layer. Voice notes arrive in beat 2 (and stay), feeling chips
 and the lane arrive in beat 3 (and stay), and beat 4 gathers everything onto the canvas. Bumps
@@ -265,7 +273,7 @@ the old flight untouched, `q = span(p,Wf,1)` feeds the beats.
 | beat | window of `q` | driver |
 | --- | --- | --- |
 | voice | 0.06–0.33 (bump) | `V` — focus card w/ waveform + big quote; board recedes |
-| feelings | 0.36–0.61 (bump) | `F` — chips scale 1.45, lane forward, notes recede |
+| feelings | 0.36–0.61 (bump) | `F` — desktop chips scale 1.45; mobile stays compact, lane forward, notes recede |
 | canvas | 0.66→ (stays) | `C` — the app's cream-dotted canvas container arrives, layers scatter |
 | annotations | 0.74→ (stays) | `A` — ring, arrow (dash-draw), scribble |
 | end game | 0.87→ (stays) | `G` — marquee + per-layer blue outlines + copy-to-figma CTA |

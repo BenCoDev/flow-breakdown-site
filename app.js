@@ -243,8 +243,17 @@
     // Clear transforms so we measure the true laid-out (end) positions.
     cards.forEach(function (c) { c.style.transform = ''; c.style.clipPath = ''; });
     xtraEls.forEach(function (el) { el.style.transform = ''; el.style.clipPath = ''; });
+    chips.forEach(function (ch) { ch.style.transform = ''; ch.style.marginLeft = ''; });
     var srect = originCell().getBoundingClientRect();
     var g = { src: srect, cards: [], pile: null };
+    g.narrow = matchMedia('(max-width: 720px)').matches;
+    // The screenshot strip can bleed beyond a narrow viewport; its labels must
+    // remain readable. Leave room for their small canvas-scatter offsets too.
+    if (g.narrow) chips.forEach(function (ch) {
+      var r = ch.getBoundingClientRect(), center = r.left + r.width / 2;
+      var fitted = clamp(center, 24 + r.width / 2, window.innerWidth - 24 - r.width / 2);
+      ch.style.marginLeft = (fitted - center).toFixed(2) + 'px';
+    });
     cards.forEach(function (c) { g.cards.push(c.getBoundingClientRect()); });
 
     var first = g.cards[0];
@@ -276,7 +285,14 @@
     g.Wf = clamp((pinY - g.startY) / (g.endY - g.startY), 0.05, 0.6);
 
     geo = g;
-    drawLane();
+    var br = board.getBoundingClientRect();
+    lane.setAttribute('width', br.width);
+    lane.setAttribute('height', br.height);
+    g.chipPoints = chips.map(function (ch) {
+      var r = ch.getBoundingClientRect();
+      return { x: r.left - br.left + r.width / 2, y: r.top - br.top + r.height / 2 };
+    });
+    drawLane(g.chipPoints);
   }
 
   var STAGETOP = 64;
@@ -297,15 +313,7 @@
   })();
   var arrowLen = 0;
 
-  function drawLane() {
-    if (!geo) return;
-    var b = board.getBoundingClientRect();
-    lane.setAttribute('width', b.width);
-    lane.setAttribute('height', b.height);
-    var pts = chips.map(function (ch) {
-      var r = ch.getBoundingClientRect();
-      return { x: r.left - b.left + r.width / 2, y: r.top - b.top + r.height / 2 };
-    });
+  function drawLane(pts) {
     lanePath.setAttribute('d',
       'M ' + pts[0].x + ' ' + pts[0].y +
       ' L ' + pts[1].x + ' ' + pts[1].y +
@@ -412,16 +420,20 @@
     });
 
     // ── beat 3: the feelings ARRIVE (and stay); the pop is just emphasis ──
+    var lanePoints = [];
     chips.forEach(function (ch, i) {
       var e = EASE(span(q, 0.40 + i * 0.03, 0.50 + i * 0.03));
       ch.style.opacity = String(e);
-      var s = mix(0.92, 1, e) * (1 + 0.45 * P);
+      var s = mix(0.92, 1, e) * (1 + (geo.narrow ? 0 : 0.45) * P);
       var cy2 = mix(8, 0, e) - 6 * P + SCAT.chips[i][2] * C;
       var cx2 = SCAT.chips[i][1] * C;
       var cr2 = SCAT.chips[i][0] * C;
-      ch.style.transform = 'translate(calc(-50% + ' + cx2.toFixed(1) + 'px),' + cy2.toFixed(1) + 'px) ' +
+      // CSS already centers the chip with translate:-50%; only add motion here.
+      ch.style.transform = 'translate(' + cx2.toFixed(1) + 'px,' + cy2.toFixed(1) + 'px) ' +
                            'scale(' + s.toFixed(3) + ') rotate(' + cr2.toFixed(2) + 'deg)';
+      lanePoints.push({ x: geo.chipPoints[i].x + cx2, y: geo.chipPoints[i].y + cy2 });
     });
+    drawLane(lanePoints);
     lanePath.style.opacity = String(EASE(span(q, 0.46, 0.58)) * (1 - C));
 
     if (waiting) waiting.style.opacity = String(1 - EASE(span(pf, 0, 0.08)));

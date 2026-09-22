@@ -489,7 +489,8 @@ h1{font-size:clamp(32px,4.4vw,52px);line-height:1.08;letter-spacing:-.032em;font
 @media (max-width:720px){
   :root{--card-max:150px;--story-footer-height:220px;--gap:16px}
   .note{margin-left:0}
-  .chip{font-size:11px;padding:3px 10px 3px 4px}
+  .chip{height:22px;font-size:11px;gap:4px;padding:0 7px 0 3px}
+  .chip .face{width:14px;height:14px}
   .board{overflow:visible}
   .flow{justify-content:center;width:max-content;margin:0 auto}
   .note{width:100%}   /* full cell width at 150px cards */
