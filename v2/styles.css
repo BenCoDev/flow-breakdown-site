@@ -575,7 +575,7 @@ footer a{text-decoration:none}
 @media (hover:hover) and (pointer:fine){
   .email-link:hover,.download-close:hover{color:var(--ink)}
 }
-@media (max-width:1023px) and (hover:none) and (pointer:coarse){
+@media (hover:none) and (pointer:coarse){
   .email-link{display:none}
 }
 @media (prefers-reduced-motion:no-preference){

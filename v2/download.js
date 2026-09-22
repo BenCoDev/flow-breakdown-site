@@ -7,7 +7,7 @@
   const DOWNLOAD_URL = ''; // Set the real release URL when the installer is available.
   const EMAIL_ENDPOINT = '';
   const PAGE_URL = 'https://bencodev.github.io/flow-breakdown-site/';
-  const mobile = matchMedia('(max-width: 1023px) and (hover: none) and (pointer: coarse)');
+  const mobile = matchMedia('(hover: none) and (pointer: coarse)');
   const dialog = document.getElementById('download-dialog');
   const form = document.getElementById('download-email-form');
   const email = document.getElementById('download-email');
@@ -22,16 +22,15 @@
   function updateLinks() {
     links.forEach(function (link) {
       const label = link.querySelector('[data-download-label]');
-      if (label) {
-        label.textContent = mobile.matches ? 'Send it to me' : 'Download for Mac';
-        link.setAttribute('aria-label', mobile.matches
-          ? 'Send it to me — email a Mac App Store link'
-          : 'Download for Mac — get Flow Breakdown on the Mac App Store');
-      } else {
-        link.setAttribute('aria-label', mobile.matches
-          ? 'Mac App Store — email yourself a link'
-          : 'Mac App Store — download Flow Breakdown');
-      }
+      const header = link.hasAttribute('data-store-link');
+      const icon = link.querySelector('.store-icon');
+      if (label) label.textContent = mobile.matches
+        ? (header ? 'Email me a link' : 'Email me the Mac link')
+        : (header ? 'Mac App Store' : 'Download for Mac');
+      if (icon) icon.src = mobile.matches ? 'assets/mail-icon.png' : 'assets/app-store-icon.png';
+      link.setAttribute('aria-label', mobile.matches
+        ? (header ? 'Email me a link to Flow Breakdown for Mac' : 'Email me the Mac link')
+        : (header ? 'Mac App Store — download Flow Breakdown' : 'Download for Mac — get Flow Breakdown on the Mac App Store'));
       link.href = DOWNLOAD_URL || '#download';
     });
   }
@@ -41,7 +40,7 @@
     form.reset();
     form.hidden = false;
     feedback.textContent = '';
-    title.textContent = unavailable ? 'The download link is coming.' : 'A little reminder for your Mac.';
+    title.textContent = unavailable ? 'The download link is coming.' : 'Email yourself the Mac link.';
     description.textContent = unavailable
       ? 'The download isn’t available on this page yet. Send yourself the page to come back later.'
       : 'Flow Breakdown is a Mac app. Email yourself a link to open when you’re back at your desk.';
@@ -65,8 +64,14 @@
   });
   document.querySelectorAll('[data-email-link]').forEach(function (button) {
     button.addEventListener('click', function () {
-      openEmail(mobile.matches ? document.getElementById('ctafig') : button, false);
+      openEmail(button, false);
     });
+  });
+  const exampleLink = document.getElementById('ctafig');
+  if (exampleLink) exampleLink.addEventListener('click', function (event) {
+    if (!mobile.matches) return;
+    event.preventDefault();
+    openEmail(exampleLink, false);
   });
   dialog.querySelector('.download-close').addEventListener('click', function () { dialog.close(); });
   dialog.addEventListener('click', function (event) {

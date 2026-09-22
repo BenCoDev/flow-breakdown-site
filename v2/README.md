@@ -27,11 +27,12 @@ The inspiration credit remains the narrative aside **inspired by App Breakdown �
 ### Download CTA and mobile email handoff
 
 `download.js` owns the download CTAs independently of animation/reduced motion.
-Following HeyClicky's pattern, touch devices below 1024px see **Send it to me** on the
-text CTAs and open a native email dialog; desktop sees **Download for Mac**.
-The custom header button keeps its **Mac App Store** label on both sizes, with an accessible label describing
-the appropriate action. Narrow desktop windows keep the desktop behavior. The close section
-also offers an email link on desktop.
+Touch devices without hover use the Apple Mail icon and **Email me the Mac link** on
+the main CTAs, including the example handoff. The compact header says **Email me a link**.
+These actions open an email dialog and restore focus to the button that opened it.
+The same live media query covers phones and larger touch tablets. Desktop keeps the
+App Store/Figma icons and download/copy actions, even in narrow windows; the close
+section also offers an email link on desktop.
 
 **The live download URL is not connected:** `DOWNLOAD_URL` is currently empty. The earlier
 `example.com` DMG URL remains only in Figma as a prototype placeholder, not a live download.
@@ -98,10 +99,13 @@ when its label changes to **Copying…**.
 The gray fill mixes 10% ink into the surface and adapts to the theme, with a subtle ink border
 (12% in light mode, 14% in dark mode).
 Hover raises the mix to 15%; active uses 18%. Keyboard focus remains visible, and transitions
-only run when reduced motion is not requested. `download.js` updates only the
-`[data-download-label]` span, preserving each icon and the header's fixed label. Accessible labels
-describe the store destination on desktop and the email handoff on mobile.
+only run when reduced motion is not requested. `download.js` updates the download
+labels and icons together for the current input device. `app.js` does the same for
+the example handoff. Accessible labels describe each actual action.
 
+`assets/mail-icon.png` is a 256px PNG converted from the installed
+`/System/Applications/Mail.app/Contents/Resources/ApplicationIcon.icns`. It is used for
+email handoff buttons, not to promise automatic delivery.
 `assets/app-store-icon.png` is an unmodified 256px PNG extracted from the installed
 `/System/Applications/App Store.app/Contents/Resources/AppIcon.icns` using `sips` conversion.
 `assets/figma-icon.png` is an unmodified 256px bitmap extracted with `iconutil` from the installed
@@ -318,10 +322,10 @@ Pending copies ignore duplicate clicks. Missing images, unavailable clipboard ac
 synchronous throws and rejected writes show an inline error and leave the copy action available
 to retry. A recording switch invalidates any pending attempt. Caveats: Figma substitutes the
 font unless the paster has SF Pro; the SVG mirrors the board's geometry (680×580), not the app's
-exact export. On **coarse pointers** the button reads "Send it to your Mac" and opens the existing
-email reminder dialog. Its submit action opens a prefilled draft; it does not send mail.
-The gray button and Figma icon are a visual change only: clipboard writes, pending/error/success
-handling, and mobile email routing retain the same behavior.
+exact export. On **coarse pointers without hover** the button uses the Apple Mail icon, reads
+"Email me the Mac link", and opens the email reminder dialog. Its submit action opens a prefilled draft; it does not send mail.
+Desktop clipboard writes and pending/error/success handling keep the Figma icon.
+The mobile dialog returns focus to the example action that opened it.
 
 **Hovering the CTA summons the team.** Three Figma-multiplayer-style cursors (mia, sam, leo —
 purple/green/coral) fade in around the button and idle with slow drifts, waiting for the paste.

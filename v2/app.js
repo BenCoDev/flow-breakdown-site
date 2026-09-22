@@ -513,7 +513,7 @@
       ctafig.style.visibility = G > 0.5 && !showPostCopy ? 'visible' : 'hidden';
       ctafig.setAttribute('aria-busy', String(copyPending));
       ctafig.setAttribute('aria-disabled', String(copyPending));
-      var nextCtaLabel = copyPending ? 'Copying…' : coarse ? 'Send it to your Mac' : 'Copy this example to Figma';
+      var nextCtaLabel = copyPending ? 'Copying…' : coarse ? 'Email me the Mac link' : 'Copy this example to Figma';
       if (ctaLabel && ctaLabel.textContent !== nextCtaLabel) ctaLabel.textContent = nextCtaLabel;
     }
     if (stage) stage.classList.toggle('canvasmode', C > 0.5);
@@ -656,9 +656,20 @@
   // as editable layers. Success then invites the visitor to try their own recording.
   // On touch there is no pasteboard story: the button emails the page to your mac.
   var CHIP_OFF = [0, 12, 8];
-  var coarse = matchMedia('(pointer: coarse)').matches;
+  var touchMedia = matchMedia('(hover: none) and (pointer: coarse)');
+  var coarse = touchMedia.matches;
   var ctaLabel = document.getElementById('ctalabel');
-  if (coarse && ctaLabel) ctaLabel.textContent = 'Send it to your Mac';
+  function updateExampleAction() {
+    coarse = touchMedia.matches;
+    if (ctafig) {
+      var icon = ctafig.querySelector('.store-icon');
+      if (icon) icon.src = coarse ? 'assets/mail-icon.png' : 'assets/figma-icon.png';
+    }
+    if (ctaLabel) ctaLabel.textContent = coarse ? 'Email me the Mac link' : 'Copy this example to Figma';
+    render(progress);
+  }
+  touchMedia.addEventListener('change', updateExampleAction);
+  updateExampleAction();
 
   function imgData(im) {
     return new Promise(function (res, reject) {
@@ -710,7 +721,7 @@
   ctafig && ctafig.addEventListener('click', function (e) {
     if (coarse) {
       e.preventDefault();
-      document.querySelector('[data-email-link]').click();
+      // download.js opens the email dialog and remembers this exact trigger.
       return;
     }
     e.preventDefault();
