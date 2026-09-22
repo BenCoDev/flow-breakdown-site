@@ -28,8 +28,8 @@ The inspiration credit remains the narrative aside **inspired by App Breakdown �
 
 The three closing quotes sit side by side on desktop and stack below 901px. Ben's attribution
 is **Ben, design engineer at noa**. The quote attributed to **Nico, designer at X** was
-drafted at the user's request and is visibly marked **Draft quote**; it is not a verified
-statement from Nico. Jose's quote is transcribed verbatim from the message screenshot
+drafted at the user's request; the visible draft label was subsequently removed at
+their request. It is not a verified statement from Nico. Jose's quote is transcribed verbatim from the message screenshot
 supplied by the user and signed **Jose, App Breakdown**: “I was literally right now
 taking 1000 screenshots of an app”.
 
