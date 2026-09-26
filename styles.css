@@ -93,6 +93,13 @@ button,a{touch-action:manipulation}
   background:color-mix(in srgb,var(--surface) 78%,transparent);
   backdrop-filter:saturate(180%) blur(20px);
   -webkit-backdrop-filter:saturate(180%) blur(20px);
+  /* A sticky bar with a LIVE backdrop filter re-samples the content behind it
+     on every scrolled frame. The story constantly creates and destroys
+     compositing layers underneath, and when that churn makes Chrome miss a
+     sample the bar falls back to painting its own background — which is 78%
+     WHITE — for a single frame. That is the white flash across the top.
+     Pinning the bar to its own layer keeps the backdrop sample stable. */
+  transform:translateZ(0);
   border-bottom:1px solid var(--line);
   font-size:13px;
 }
