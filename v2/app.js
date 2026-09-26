@@ -115,6 +115,9 @@
 
   var slots = [].slice.call(board.querySelectorAll('.slot'));
   var cards = slots.map(function (s) { return s.querySelector('.card'); });
+  // Stacking order never varies with p — set it once. Rewriting z-index per
+  // frame reshuffles paint order and invalidates the stacking context for free.
+  cards.forEach(function (c, i) { c.style.zIndex = 10 + i; });
   var chips = slots.map(function (s) { return s.querySelector('.chip'); });
   var notes = slots.map(function (s) { return s.querySelector('.note'); });
   var labels= slots.map(function (s) { return s.querySelector('.label'); });
@@ -154,6 +157,9 @@
       im.srcset = 'assets/' + f + ' 1x, assets/' + f.replace('.jpg', '@2x.jpg') + ' 2x';
       im.alt = '';
       el.appendChild(im);
+      // Only the near pair ever overrode the stylesheet's z-index:1 — keep it
+      // that way, just hoisted out of the frame loop (the value never varies).
+      if (k <= 2) el.style.zIndex = 8 - k;
       board.insertBefore(el, board.firstChild);
       xtraEls.push(el);
     });
@@ -252,8 +258,8 @@
 
   function measure() {
     // Clear transforms so we measure the true laid-out (end) positions.
-    cards.forEach(function (c) { c.style.transform = ''; c.style.clipPath = ''; });
-    xtraEls.forEach(function (el) { el.style.transform = ''; el.style.clipPath = ''; });
+    cards.forEach(function (c) { c.style.transform = ''; setPaint(c, 'clipPath', ''); });
+    xtraEls.forEach(function (el) { el.style.transform = ''; setPaint(el, 'clipPath', ''); });
     chips.forEach(function (ch) { ch.style.transform = ''; ch.style.marginLeft = ''; });
     var srect = originCell().getBoundingClientRect();
     var g = { src: srect, cards: [], pile: null };
@@ -341,6 +347,21 @@
 
   function bump(t, a, b, c, d) { return EASE(span(t, a, b)) * (1 - EASE(span(t, c, d))); }
 
+  // PAINT properties (box-shadow, clip-path, stroke dashes) cannot be composited:
+  // assigning one throws away the element's cached raster tiles. Writing them on
+  // every scrolled frame across ~25 image-bearing elements puts the raster thread
+  // behind the compositor, which then draws tiles that aren't ready yet — the
+  // white flash. p is continuous, but each of these values is CONSTANT outside
+  // its own beat, so only touch the DOM when the value actually changes.
+  // Anything that clears one of these must go through here too, or the cache
+  // desyncs and render() skips the write that would restore it.
+  function setPaint(el, prop, value) {
+    var key = '_p_' + prop;
+    if (el[key] === value) return;
+    el[key] = value;
+    el.style[prop] = value;
+  }
+
   function render(p) {
     if (!geo) return;
     var Wf = geo.Wf || 0.3;
@@ -388,15 +409,14 @@
       rt += SCAT.cards[i][0] * C;
 
       c.style.opacity = pf <= a ? '0' : String(1 - 0.3 * V - 0.25 * P);
-      c.style.zIndex = 10 + i;
       c.style.transform = 'translate(' + tx.toFixed(2) + 'px,' + ty.toFixed(2) + 'px) ' +
                           'scale(' + sc.toFixed(4) + ') rotate(' + rt.toFixed(2) + 'deg)';
-      c.style.boxShadow = G > 0
+      setPaint(c, 'boxShadow', G > 0
         ? 'var(--card-shadow), 0 0 0 1.5px rgba(13,153,255,' + (0.8 * G).toFixed(3) + ')'
-        : '';
+        : '');
 
       var ins = mix(geo.inset0, 0, EASE(span(pf, a, a + UNFURL)));
-      c.style.clipPath = 'inset(' + ins.toFixed(1) + 'px 0 ' + ins.toFixed(1) + 'px 0 round 19px)';
+      setPaint(c, 'clipPath', 'inset(' + ins.toFixed(1) + 'px 0 ' + ins.toFixed(1) + 'px 0 round 19px)');
 
       var land = span(pf, b, b + SQUASH), back = span(pf, b + SQUASH, b + SQUASH * 2);
       if (land > 0 && back < 1) {
@@ -427,7 +447,7 @@
       var nr = SCAT.notes[i][0] * C;
       n.style.transform = 'translate(' + nx.toFixed(1) + 'px,' + ny.toFixed(1) + 'px) ' +
                           'scale(' + mix(0.92, 1, e).toFixed(3) + ') rotate(' + nr.toFixed(2) + 'deg)';
-      n.style.boxShadow = G > 0 ? '0 1px 3px rgba(0,0,0,.09), 0 0 0 1px rgba(13,153,255,' + (0.7 * G).toFixed(3) + ')' : '';
+      setPaint(n, 'boxShadow', G > 0 ? '0 1px 3px rgba(0,0,0,.09), 0 0 0 1px rgba(13,153,255,' + (0.7 * G).toFixed(3) + ')' : '');
     });
 
     // ── beat 3: the feelings ARRIVE (and stay); the pop is just emphasis ──
@@ -475,8 +495,7 @@
         el.style.transform = 'translate(' + tx2.toFixed(2) + 'px,' + ty2.toFixed(2) + 'px) ' +
                              'scale(' + sc2.toFixed(4) + ') rotate(' + rt2.toFixed(2) + 'deg)';
         var ins2 = mix(geo.inset0, 0, EASE(span(pf, a2, a2 + 0.11)));
-        el.style.clipPath = 'inset(' + ins2.toFixed(1) + 'px 0 ' + ins2.toFixed(1) + 'px 0 round 19px)';
-        el.style.zIndex = 8 - k;
+        setPaint(el, 'clipPath', 'inset(' + ins2.toFixed(1) + 'px 0 ' + ins2.toFixed(1) + 'px 0 round 19px)');
         el.style.opacity = pf <= a2 ? '0'
           : String(mix(1, base, EASE(span(pf, b2, b2 + 0.08))) * lensC);
       } else {
@@ -494,8 +513,8 @@
     if (arrowPath) {
       if (!arrowLen) { try { arrowLen = arrowPath.getTotalLength(); } catch (e2) { arrowLen = 260; } }
       arrow.style.opacity = String(Math.min(1, A * 3));
-      arrowPath.style.strokeDasharray = arrowLen;
-      arrowPath.style.strokeDashoffset = String((1 - A) * arrowLen);
+      setPaint(arrowPath, 'strokeDasharray', String(arrowLen));
+      setPaint(arrowPath, 'strokeDashoffset', String((1 - A) * arrowLen));
     }
     if (scribble) { scribble.style.opacity = String(A); scribble.style.translate = '0 ' + mix(-8, 0, A).toFixed(1) + 'px'; }
     if (marquee) { marquee.style.opacity = String(G); marquee.style.scale = String(mix(1.02, 1, G).toFixed(3)); }

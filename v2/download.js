@@ -82,7 +82,7 @@
     feedback.textContent = '';
     const recipient = email.value.trim();
     if (!EMAIL_ENDPOINT) {
-      const body = 'Open this on your Mac to get Flow Breakdown:\n\n' + DOWNLOAD_URL + '\n\nRequires macOS 26 or later.';
+      const body = 'Open this on your Mac to get Flow Breakdown:\n\n' + DOWNLOAD_URL + '\n\nRequires macOS 14 or later. Automatic voice notes require macOS 26 and supported speech recognition; key points and feeling suggestions also need Apple Intelligence.';
       window.location.href = 'mailto:' + encodeURIComponent(recipient) + '?subject=' + encodeURIComponent('Flow Breakdown for your Mac') + '&body=' + encodeURIComponent(body);
       feedback.textContent = 'Send the draft from your email app. If it didn’t open, check that an email app is set up on this device.';
       return;

@@ -131,14 +131,14 @@ from the selected thumbnail. The matching Figma hero uses the same bottom-seated
 
 The redundant **three steps, then it’s a board** band is removed. The menu's **How it works**
 link now points to `#zone`; the demo leads directly to practical questions about local processing,
-macOS 26 or later, Figma layers, optional voice, and price. The requirements row also explains
+macOS 14 or later, Figma layers, optional voice, and price. The requirements row also explains
 that key points and feeling suggestions need Apple Intelligence turned on. Silent recordings still become a board;
 voice analysis maps the visitor's own reactions rather than claiming to judge the interface.
 
 **Current CTA shapes · 21 September 2026.** Download and example-copy actions share a custom gray `.store-button`
 with a 12px radius and the blue App Store icon. The header button is 44px high with a 32px icon
 and the label **Mac App Store**. The closing **Download for Mac** button is 48px high with a
-34px icon; **Mac App Store · macOS 26+** sits underneath, with **free at launch** on its own line.
+34px icon; **Mac App Store · macOS 14+** sits underneath, with **free at launch** on its own line.
 After copying, the button keeps a 44px height and 30px icon so the reserved footer still fits.
 **Copy this example to Figma** now uses the same gray fill, subtle border, and 12px radius,
 with a 34px Figma icon. Its button is at least 48px high, with 15px text and padding of
@@ -299,6 +299,18 @@ The small menu bar retains its local blur. The canvas arriving at beat 4 — `#g
 The scroll driver also skips rendering when its clamped progress has not changed, and copy
 button text only updates when its label changes. Initial setup and remeasurement force a render;
 copy, drag, and recording changes retain their direct renders. The scroll mapping is unchanged.
+
+**Never write a PAINT property on every frame.** `transform` and `opacity` are composited and
+free; `box-shadow`, `clip-path` and `z-index` are not. Assigning one discards the element's
+cached raster tiles, and doing that across the ~25 image-bearing elements of the board puts the
+raster thread behind the compositor — which then draws tiles that are not ready yet, as a white
+flash during scroll. Every such write goes through `setPaint(el, prop, value)`, which touches
+the DOM only when the value actually changes; `p` is continuous but these values are constant
+outside their own beat. Two consequences worth remembering: anything that CLEARS one of these
+(notably `measure()`'s transform reset) must also go through `setPaint`, or the cache desyncs
+and the next render skips the write that would restore it; and constants must never be written
+in the loop at all — card `z-index` (`10+i`) and near-xtra `z-index` (`8-k`) are set once at
+build time. Measured render-side paint writes per scrolled frame: 22 before, 0.4 after.
 
 That is ~440 px of scroll on a desktop window — short enough that an ordinary scroll-through sees
 the whole flight, long enough to have real texture.
@@ -480,3 +492,5 @@ branch, no play-once state machine.
       Fine as illustration; do not let them read as testimony.
 - [ ] **Six more third-party screens** were added for those two recordings (Mobbin, footer cropped),
       so the rights question above now covers fourteen screens across three apps.
+
+Compatibility copy targets the next macOS 14+ release. Publish only after packaged-app runtime verification on macOS 14 and 15. Automatic voice notes remain 26+ with supported speech recognition; key points and feeling suggestions also require Apple Intelligence.
