@@ -104,6 +104,13 @@ button,a{touch-action:manipulation}
   font-size:13px;
 }
 .menus{display:flex;align-items:center;gap:18px;min-width:0}
+/* The mark and the wordmark are the way back to the top — the convention every
+   site has, and it reads as the app's menu title, which is the bar's whole idea.
+   href="#top" with no matching element is the spec's "scroll to the beginning of
+   the document", so this works with JS off; `scroll-behavior` is already reset to
+   auto under prefers-reduced-motion, so it does not animate for those who opted out. */
+.menus .home{display:inline-flex;align-items:center;gap:18px;
+  color:inherit;text-decoration:none;border-radius:8px}
 .menus .mark{width:36px;height:36px;max-width:none;object-fit:contain;flex:none;margin-right:-10px}
 .menus .app{font-weight:600;white-space:nowrap}
 .menus a{color:var(--ink-2);text-decoration:none}
@@ -119,9 +126,11 @@ button,a{touch-action:manipulation}
 .store-button:active{background:color-mix(in srgb,var(--ink) 18%,var(--surface));transform:scale(.98)}
 @media (hover:hover) and (pointer:fine){
   .store-button:hover{background:color-mix(in srgb,var(--ink) 15%,var(--surface));border-color:color-mix(in srgb,var(--ink) 22%,transparent)}
+  .menus .home:hover{opacity:.68}
 }
 @media (prefers-reduced-motion:no-preference){
   .store-button{transition:background-color .16s ease,border-color .16s ease,transform .16s ease}
+  .menus .home{transition:opacity .16s ease}
 }
 @media (max-width:900px){.status .req{display:none}}
 @media (max-width:640px){
