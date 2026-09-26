@@ -90,15 +90,15 @@ button,a{touch-action:manipulation}
   position:sticky;top:0;z-index:60;
   display:flex;align-items:center;justify-content:space-between;gap:16px;
   min-height:var(--header-height);padding:10px 16px;
-  background:color-mix(in srgb,var(--surface) 78%,transparent);
-  backdrop-filter:saturate(180%) blur(20px);
-  -webkit-backdrop-filter:saturate(180%) blur(20px);
-  /* A sticky bar with a LIVE backdrop filter re-samples the content behind it
-     on every scrolled frame. The story constantly creates and destroys
-     compositing layers underneath, and when that churn makes Chrome miss a
-     sample the bar falls back to painting its own background — which is 78%
-     WHITE — for a single frame. That is the white flash across the top.
-     Pinning the bar to its own layer keeps the backdrop sample stable. */
+  /* NO backdrop-filter here, deliberately. A live backdrop filter forces this
+     sticky bar to re-rasterise every scrolled frame; captured frame-by-frame,
+     a right-hand TILE of the bar repeatedly failed to raster in time and was
+     presented empty — the status text and the store button vanished and the
+     pale page showed through for one frame. That is the white flash. Layer
+     promotion does not help: the dropout is per-tile inside the layer, not the
+     layer itself. A static background has nothing to re-sample and cannot drop
+     a tile. Raised to 92% so the bar still reads as a surface without the blur. */
+  background:color-mix(in srgb,var(--surface) 92%,transparent);
   transform:translateZ(0);
   border-bottom:1px solid var(--line);
   font-size:13px;
