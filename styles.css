@@ -498,7 +498,10 @@ h1{font-size:clamp(32px,4.4vw,52px);line-height:1.08;letter-spacing:-.032em;font
 .cardbox{position:relative;width:var(--card-w);height:var(--card-h)}
 .ghost{position:absolute;inset:0;border-radius:19px;
   border:1px dashed color-mix(in srgb, var(--ink) 14%, transparent);
-  background:color-mix(in srgb, var(--surface) 46%, transparent);
+  /* Was 46% WHITE: three card-sized white boxes whose opacity is driven by
+     scroll, so a single flick flashed them in and out. A faint ink tint reads
+     as an empty slot instead, and can never flash brighter than the page. */
+  background:color-mix(in srgb, var(--ink) 4%, transparent);
   opacity:0;transition:none}
 .armed .ghost{opacity:1}
 .armed .card{

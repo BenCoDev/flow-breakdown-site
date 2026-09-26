@@ -347,6 +347,8 @@
 
   function bump(t, a, b, c, d) { return EASE(span(t, a, b)) * (1 - EASE(span(t, c, d))); }
 
+  var POP = 0.10;   // ramp width, in pf, that replaces the old on/off opacity cut
+
   // PAINT properties (box-shadow, clip-path, stroke dashes) cannot be composited:
   // assigning one throws away the element's cached raster tiles. Writing them on
   // every scrolled frame across ~25 image-bearing elements puts the raster thread
@@ -408,7 +410,12 @@
       ty += SCAT.cards[i][2] * C + drags[i].y;
       rt += SCAT.cards[i][0] * C;
 
-      c.style.opacity = pf <= a ? '0' : String(1 - 0.3 * V - 0.25 * P);
+      // A binary cut here (0 -> ~1 in one frame) made each card POP as it
+      // crossed its threshold. Seven of those inside the ~0.5 s flight strobed
+      // the light page through the gaps — the white flash. Ramp over 3% of pf
+      // instead: too short to read as a fade, long enough to kill the step.
+      // Still a pure function of pf — no time-based transition.
+      c.style.opacity = String((1 - 0.3 * V - 0.25 * P) * EASE(span(pf, a, a + POP)));
       c.style.transform = 'translate(' + tx.toFixed(2) + 'px,' + ty.toFixed(2) + 'px) ' +
                           'scale(' + sc.toFixed(4) + ') rotate(' + rt.toFixed(2) + 'deg)';
       setPaint(c, 'boxShadow', G > 0
@@ -496,8 +503,8 @@
                              'scale(' + sc2.toFixed(4) + ') rotate(' + rt2.toFixed(2) + 'deg)';
         var ins2 = mix(geo.inset0, 0, EASE(span(pf, a2, a2 + 0.11)));
         setPaint(el, 'clipPath', 'inset(' + ins2.toFixed(1) + 'px 0 ' + ins2.toFixed(1) + 'px 0 round 19px)');
-        el.style.opacity = pf <= a2 ? '0'
-          : String(mix(1, base, EASE(span(pf, b2, b2 + 0.08))) * lensC);
+        el.style.opacity = String(mix(1, base, EASE(span(pf, b2, b2 + 0.08)))
+          * lensC * EASE(span(pf, a2, a2 + POP)));
       } else {
         el.style.opacity = String(base * EASE(span(q, 0.01 + k * 0.012, 0.05 + k * 0.012)) * lensC);
       }
