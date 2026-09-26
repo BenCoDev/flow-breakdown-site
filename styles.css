@@ -126,11 +126,9 @@ button,a{touch-action:manipulation}
 .store-button:active{background:color-mix(in srgb,var(--ink) 18%,var(--surface));transform:scale(.98)}
 @media (hover:hover) and (pointer:fine){
   .store-button:hover{background:color-mix(in srgb,var(--ink) 15%,var(--surface));border-color:color-mix(in srgb,var(--ink) 22%,transparent)}
-  .menus .home:hover{opacity:.68}
 }
 @media (prefers-reduced-motion:no-preference){
   .store-button{transition:background-color .16s ease,border-color .16s ease,transform .16s ease}
-  .menus .home{transition:opacity .16s ease}
 }
 @media (max-width:900px){.status .req{display:none}}
 @media (max-width:640px){
